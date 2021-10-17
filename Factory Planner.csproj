@@ -1,0 +1,11 @@
+<Project Sdk="Godot.NET.Sdk/3.3.0">
+  <PropertyGroup>
+    <TargetFramework>net472</TargetFramework>
+    <RootNamespace>FactoryPlanner</RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <Content Include="..\..\..\.steam\debian-installation\steamapps\common\Godot Engine\demos\gui\drag_and_drop\drag_drop_script.gd">
+      <Link>drag_drop_script.gd</Link>
+    </Content>
+  </ItemGroup>
+</Project>
