@@ -1,7 +1,7 @@
 using Godot;
 using System;
 
-public class Main : GraphEdit
+public class GraphEdit : Godot.GraphEdit
 {
 	// Declare member variables here. Examples:
 	// private int a = 2;
