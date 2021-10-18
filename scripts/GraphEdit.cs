@@ -49,15 +49,15 @@ public class GraphEdit : Godot.GraphEdit
         }
     }
 
-    private void _on_GraphEdit_connection_request(string from, int from_slot, string to, int to_slot)
+    private void _on_GraphEdit_connection_request(string fromName, int fromSlot, string toName, int toSlot)
     {
-        MachineNode fromNode = this.GetNode<MachineNode>(from);
-        MachineNode toNode = this.GetNode<MachineNode>(to);
+        MachineNode fromNode = this.GetNode<MachineNode>(fromName);
+        MachineNode toNode = this.GetNode<MachineNode>(toName);
 
-        if (this.IsValidConnectionType(fromNode.GetSlotTypeRight(from_slot), toNode.GetSlotTypeLeft(to_slot)) &&
-            !this.HasInput(to, to_slot) && !this.HasOutput(from, from_slot))
+        if (this.IsValidConnectionType(fromNode.GetSlotTypeRight(fromSlot), toNode.GetSlotTypeLeft(toSlot)) &&
+            !this.HasInput(toName, toSlot) && !this.HasOutput(fromName, fromSlot))
         {
-            this.ConnectNode(from, from_slot, to, to_slot);
+            this.ConnectNode(fromName, fromSlot, toName, toSlot);
         }
     }
 
@@ -87,8 +87,8 @@ public class GraphEdit : Godot.GraphEdit
         return false;
     }
 
-    private void _on_GraphEdit_disconnection_request(string from, int from_slot, string to, int to_slot)
+    private void _on_GraphEdit_disconnection_request(string from, int fromSlot, string to, int toSlot)
     {
-        this.DisconnectNode(from, from_slot, to, to_slot);
+        this.DisconnectNode(from, fromSlot, to, toSlot);
     }
 }
