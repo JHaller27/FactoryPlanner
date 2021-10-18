@@ -4,14 +4,12 @@ using FactoryPlanner.scripts;
 using FactoryPlanner.scripts.machines;
 using FactoryPlanner.scripts.resources;
 using Godot;
-using Resource = FactoryPlanner.scripts.resources.Resource;
 
 public class MinerNode : MachineNode
 {
-    private OptionButton MkOptionButton => this.GetChild<HBoxContainer>(0).GetChild<VBoxContainer>(1).GetChild<HBoxContainer>(2).GetChild<OptionButton>(0);
-    private OptionButton PurityOptionButton => this.GetChild<HBoxContainer>(0).GetChild<VBoxContainer>(1).GetChild<HBoxContainer>(2).GetChild<OptionButton>(1);
-    private OptionButton ResourceOptionButton => this.GetChild<HBoxContainer>(0).GetChild<VBoxContainer>(1).GetChild<OptionButton>(3);
-    private Label OutputLabel => this.GetChild<HBoxContainer>(0).GetChild<VBoxContainer>(2).GetChild<Label>(0);
+    private OptionButton MkOptionButton => this.ControlsContainer.GetChild<HBoxContainer>(2).GetChild<OptionButton>(0);
+    private OptionButton PurityOptionButton => this.ControlsContainer.GetChild<HBoxContainer>(2).GetChild<OptionButton>(1);
+    private OptionButton ResourceOptionButton => this.ControlsContainer.GetChild<OptionButton>(3);
 
     private enum LevelList
     {

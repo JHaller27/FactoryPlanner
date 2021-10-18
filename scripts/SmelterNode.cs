@@ -4,7 +4,7 @@ using FactoryPlanner.scripts.resources;
 
 public class SmelterNode : MachineNode
 {
-    private OptionButton ResourceOptionButton => this.GetChild<HBoxContainer>(0).GetChild<VBoxContainer>(1).GetChild<OptionButton>(2);
+    private OptionButton ResourceOptionButton => this.ControlsContainer.GetChild<OptionButton>(2);
 
     internal SmelterNode() : base(1, 1)
     {
