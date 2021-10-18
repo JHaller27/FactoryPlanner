@@ -63,10 +63,12 @@ namespace FactoryPlanner.scripts.machines
             for (int i = 0; i < recipe.Inputs.Count; i++)
             {
                 this.Inputs[i].Resource = recipe.Inputs[i].Resource;
+                this.Inputs[i].Rate = recipe.Inputs[i].Rate;
             }
             for (int i = 0; i < recipe.Outputs.Count; i++)
             {
                 this.Outputs[i].Resource = recipe.Outputs[i].Resource;
+                this.Outputs[i].Rate = recipe.Outputs[i].Rate;
             }
 
             this.UpdateSlots();
