@@ -21,7 +21,7 @@ namespace FactoryPlanner.scripts.resources
 
         public static readonly IList<Resource> Resources = new List<Resource>();
 
-        public static void AddResource(Resource resource)
+        private static void AddResource(Resource resource)
         {
             resource.Id = Resources.Count;
             Resources.Add(resource);

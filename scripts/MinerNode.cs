@@ -9,7 +9,7 @@ using Resource = FactoryPlanner.scripts.resources.Resource;
 
 public class MinerNode : MachineNode
 {
-    private static readonly int[] ResourceIds = new[] { 1, 2 };
+    private static readonly int[] ResourceIds = { 1, 2 };
 
     private OptionButton MkOptionButton => this.ControlsContainer.GetChild<HBoxContainer>(2).GetChild<OptionButton>(0);
     private OptionButton PurityOptionButton => this.ControlsContainer.GetChild<HBoxContainer>(2).GetChild<OptionButton>(1);

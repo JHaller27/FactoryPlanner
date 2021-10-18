@@ -13,6 +13,7 @@ public class GraphEdit : Godot.GraphEdit
     {
         // One-time load resources
         Resource.LoadResources();
+        Recipe.LoadRecipes();
 
         // Set valid resources
         foreach (Resource resource in Resource.Resources)
