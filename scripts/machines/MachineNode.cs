@@ -7,15 +7,15 @@ namespace FactoryPlanner.scripts.machines
 {
     public class MachineNode : GraphNode
     {
-        public IList<Throughput> Inputs { get; }
-        public IList<Throughput> Outputs { get; }
+        private IList<Throughput> Inputs { get; }
+        protected IList<Throughput> Outputs { get; }
 
-        protected VBoxContainer InputContainer => this.GetChild<HBoxContainer>(0).GetChild<VBoxContainer>(0);
+        private VBoxContainer InputContainer => this.GetChild<HBoxContainer>(0).GetChild<VBoxContainer>(0);
         protected VBoxContainer ControlsContainer => this.GetChild<HBoxContainer>(0).GetChild<VBoxContainer>(1);
-        protected VBoxContainer OutputContainer => this.GetChild<HBoxContainer>(0).GetChild<VBoxContainer>(2);
+        private VBoxContainer OutputContainer => this.GetChild<HBoxContainer>(0).GetChild<VBoxContainer>(2);
 
-        protected Label ResourceNameLabel(VBoxContainer container, int slotId) => container.GetChild<VBoxContainer>(slotId).GetChild<Label>(0);
-        protected Label RateLabel(VBoxContainer container, int slotId) => container.GetChild<VBoxContainer>(slotId).GetChild<Label>(1);
+        private Label ResourceNameLabel(VBoxContainer container, int slotId) => container.GetChild<VBoxContainer>(slotId).GetChild<Label>(0);
+        private Label RateLabel(VBoxContainer container, int slotId) => container.GetChild<VBoxContainer>(slotId).GetChild<Label>(1);
 
         internal MachineNode(int numInputs, int numOutputs)
         {
