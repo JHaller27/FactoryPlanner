@@ -1,6 +1,8 @@
 using Godot;
 using System;
+using FactoryPlanner.scripts;
 using FactoryPlanner.scripts.resources;
+using Godot.Collections;
 using Resource = FactoryPlanner.scripts.resources.Resource;
 
 public class GraphEdit : Godot.GraphEdit
@@ -49,13 +51,40 @@ public class GraphEdit : Godot.GraphEdit
 
     private void _on_GraphEdit_connection_request(string from, int from_slot, string to, int to_slot)
     {
-        GraphNode fromNode = this.GetNode<GraphNode>(from);
-        GraphNode toNode = this.GetNode<GraphNode>(to);
+        MachineNode fromNode = this.GetNode<MachineNode>(from);
+        MachineNode toNode = this.GetNode<MachineNode>(to);
 
-        if (this.IsValidConnectionType(fromNode.GetSlotTypeRight(from_slot), toNode.GetSlotTypeLeft(to_slot)))
+        if (this.IsValidConnectionType(fromNode.GetSlotTypeRight(from_slot), toNode.GetSlotTypeLeft(to_slot)) &&
+            !this.HasInput(to, to_slot) && !this.HasOutput(from, from_slot))
         {
             this.ConnectNode(from, from_slot, to, to_slot);
         }
+    }
+
+    private bool HasInput(string toName, int toSlot)
+    {
+        foreach (Dictionary x in this.GetConnectionList())
+        {
+            string checkName = (string)x["to"];
+            int checkSlot = (int)x["to_port"];
+
+            if (checkName == toName && checkSlot == toSlot) return true;
+        }
+
+        return false;
+    }
+
+    private bool HasOutput(string fromName, int fromSlot)
+    {
+        foreach (Dictionary x in this.GetConnectionList())
+        {
+            string checkName = (string)x["from"];
+            int checkSlot = (int)x["from_port"];
+
+            if (checkName == fromName && checkSlot == fromSlot) return true;
+        }
+
+        return false;
     }
 
     private void _on_GraphEdit_disconnection_request(string from, int from_slot, string to, int to_slot)
