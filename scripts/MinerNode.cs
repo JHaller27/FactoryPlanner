@@ -1,6 +1,7 @@
 using System;
 using System.ComponentModel;
 using FactoryPlanner.scripts;
+using FactoryPlanner.scripts.machines;
 using FactoryPlanner.scripts.resources;
 using Godot;
 using Resource = FactoryPlanner.scripts.resources.Resource;

@@ -1,7 +1,7 @@
 using System;
 using Godot;
 
-namespace FactoryPlanner.scripts
+namespace FactoryPlanner.scripts.machines
 {
     public class MachineNode : GraphNode
     {
