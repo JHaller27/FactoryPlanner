@@ -9,6 +9,7 @@ namespace FactoryPlanner.scripts.machines
     {
         private IList<Throughput> Inputs { get; }
         protected IList<Throughput> Outputs { get; }
+        protected Recipe CurrentRecipe { private get; set; }
 
         private VBoxContainer InputContainer => this.GetChild<HBoxContainer>(0).GetChild<VBoxContainer>(0);
         protected VBoxContainer ControlsContainer => this.GetChild<HBoxContainer>(0).GetChild<VBoxContainer>(1);
@@ -51,6 +52,21 @@ namespace FactoryPlanner.scripts.machines
                 slotLabelContainer.AddChild(new Label());
 
                 this.OutputContainer.AddChild(slotLabelContainer);
+            }
+
+            this.UpdateSlots();
+        }
+
+        protected void UpdateRecipe(Recipe recipe)
+        {
+            this.CurrentRecipe = recipe;
+            for (int i = 0; i < recipe.Inputs.Count; i++)
+            {
+                this.Inputs[i].Resource = recipe.Inputs[i].Resource;
+            }
+            for (int i = 0; i < recipe.Outputs.Count; i++)
+            {
+                this.Outputs[i].Resource = recipe.Outputs[i].Resource;
             }
 
             this.UpdateSlots();

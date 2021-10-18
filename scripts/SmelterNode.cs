@@ -1,6 +1,8 @@
+using System.Collections.Generic;
 using Godot;
 using FactoryPlanner.scripts.machines;
 using FactoryPlanner.scripts.resources;
+using Resource = FactoryPlanner.scripts.resources.Resource;
 
 public class SmelterNode : MachineNode
 {
@@ -23,7 +25,12 @@ public class SmelterNode : MachineNode
     private void _on_Resource_Selected(int index)
     {
         ResourceList resourceEnumVal = (ResourceList)this.ResourceOptionButton.GetItemMetadata(index);
-        this.Outputs[0].SetResource(resourceEnumVal);
+        this.UpdateRecipe(new Recipe
+        {
+            Name = "Iron Ingot",
+            Inputs = new List<Throughput> {new Throughput {Rate = 30, Resource = Resource.GetResource(resourceEnumVal)}},
+            Outputs = new List<Throughput> {new Throughput {Rate = 45, Resource = Resource.GetResource(ResourceList.Copper)}},
+        });
 
         this.UpdateSlots();
     }
