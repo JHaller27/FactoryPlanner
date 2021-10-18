@@ -1,35 +1,60 @@
-[gd_scene load_steps=6 format=2]
+[gd_scene load_steps=3 format=2]
 
-[ext_resource path="res://Main.cs" type="Script" id=1]
-[ext_resource path="res://TileMap.cs" type="Script" id=2]
-[ext_resource path="res://assets/blueprint_cell.png" type="Texture" id=3]
-[ext_resource path="res://Camera/Camera2D.cs" type="Script" id=4]
+[ext_resource path="res://scripts/Main.cs" type="Script" id=1]
+[ext_resource path="res://assets/M_sprite.png" type="Texture" id=2]
 
-[sub_resource type="TileSet" id=1]
-0/name = "blueprint_cell.png 0"
-0/texture = ExtResource( 3 )
-0/tex_offset = Vector2( 0, 0 )
-0/modulate = Color( 1, 1, 1, 1 )
-0/region = Rect2( 0, 0, 128, 128 )
-0/tile_mode = 0
-0/occluder_offset = Vector2( 0, 0 )
-0/navigation_offset = Vector2( 0, 0 )
-0/shape_offset = Vector2( 0, 0 )
-0/shape_transform = Transform2D( 1, 0, 0, 1, 0, 0 )
-0/shape_one_way = false
-0/shape_one_way_margin = 0.0
-0/shapes = [  ]
-0/z_index = 0
+[node name="Main" type="Control"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+__meta__ = {
+"_edit_lock_": true,
+"_edit_use_anchors_": false
+}
 
-[node name="Node2D" type="Node2D"]
+[node name="GraphEdit" type="GraphEdit" parent="."]
+anchor_right = 1.0
+anchor_bottom = 1.0
 script = ExtResource( 1 )
+__meta__ = {
+"_edit_lock_": true,
+"_edit_use_anchors_": true
+}
 
-[node name="TileMap" type="TileMap" parent="."]
-tile_set = SubResource( 1 )
-cell_size = Vector2( 128, 128 )
-format = 1
-script = ExtResource( 2 )
+[node name="HBoxContainer" type="HBoxContainer" parent="."]
+margin_left = 69.4814
+margin_top = 514.461
+margin_right = 173.481
+margin_bottom = 546.461
+__meta__ = {
+"_edit_use_anchors_": false
+}
 
-[node name="Camera2D" type="Camera2D" parent="."]
-current = true
-script = ExtResource( 4 )
+[node name="TextureRect" type="TextureRect" parent="HBoxContainer"]
+margin_right = 32.0
+margin_bottom = 32.0
+texture = ExtResource( 2 )
+__meta__ = {
+"_edit_lock_": true
+}
+
+[node name="TextureRect2" type="TextureRect" parent="HBoxContainer"]
+margin_left = 36.0
+margin_right = 68.0
+margin_bottom = 32.0
+texture = ExtResource( 2 )
+__meta__ = {
+"_edit_lock_": true,
+"_edit_use_anchors_": false
+}
+
+[node name="TextureRect3" type="TextureRect" parent="HBoxContainer"]
+margin_left = 72.0
+margin_right = 104.0
+margin_bottom = 32.0
+texture = ExtResource( 2 )
+__meta__ = {
+"_edit_lock_": true,
+"_edit_use_anchors_": false
+}
+
+[connection signal="connection_request" from="GraphEdit" to="GraphEdit" method="_on_GraphEdit_connection_request"]
