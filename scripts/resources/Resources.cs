@@ -34,5 +34,12 @@ namespace FactoryPlanner.scripts.resources
         {
             return ResourceMap.TryGetValue(val, out resource);
         }
+
+        public static Resource GetResource(ResourceList val)
+        {
+            if (TryGetResource(val, out Resource resource)) return resource;
+
+            throw new KeyNotFoundException();
+        }
     }
 }
