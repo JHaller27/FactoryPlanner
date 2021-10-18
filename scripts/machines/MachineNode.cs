@@ -9,7 +9,6 @@ namespace FactoryPlanner.scripts.machines
     {
         private IList<Throughput> Inputs { get; }
         protected IList<Throughput> Outputs { get; }
-        protected Recipe CurrentRecipe { private get; set; }
 
         private VBoxContainer InputContainer => this.GetChild<HBoxContainer>(0).GetChild<VBoxContainer>(0);
         protected VBoxContainer ControlsContainer => this.GetChild<HBoxContainer>(0).GetChild<VBoxContainer>(1);
@@ -59,7 +58,6 @@ namespace FactoryPlanner.scripts.machines
 
         protected void UpdateRecipe(Recipe recipe)
         {
-            this.CurrentRecipe = recipe;
             for (int i = 0; i < recipe.Inputs.Count; i++)
             {
                 this.Inputs[i].Resource = recipe.Inputs[i].Resource;
@@ -86,8 +84,8 @@ namespace FactoryPlanner.scripts.machines
 
                 // Update slots
                 this.SetSlot(slotId,
-                    input != null, input?.TypeId ?? Resource.DefaultId, input?.Color ?? Resource.DefaultColor,
-                    output != null, output?.TypeId ?? Resource.DefaultId, output?.Color ?? Resource.DefaultColor);
+                    input != null, input?.TypeId ?? Resource.Any.Id, input?.Color ?? Resource.DefaultColor,
+                    output != null, output?.TypeId ?? Resource.Any.Id, output?.Color ?? Resource.DefaultColor);
 
                 // Update labels
                 if (input != null)
@@ -111,6 +109,12 @@ namespace FactoryPlanner.scripts.machines
                 optionButton.AddItem(val.ToString());
                 optionButton.SetItemMetadata(optionButton.GetItemCount()-1, val);
             }
+        }
+
+        protected static void AddOption<T>(OptionButton optionButton, string name, T metaData)
+        {
+            optionButton.AddItem(name);
+            optionButton.SetItemMetadata(optionButton.GetItemCount()-1, metaData);
         }
 
         protected void _on_GraphNode_close_request()

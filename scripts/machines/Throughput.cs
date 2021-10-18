@@ -7,7 +7,7 @@ namespace FactoryPlanner.scripts.machines
     public class Throughput
     {
         public int Rate { get; set; } = 0;  // In hundreths of Parts Per Minute
-        public Resource Resource { get; set; } = Resource.GetResource(ResourceList.Any);
+        public Resource Resource { get; set; } = Resource.Any;
 
         public int TypeId => this.Resource.Id;
         public string Name => this.Resource.Name;
@@ -15,12 +15,10 @@ namespace FactoryPlanner.scripts.machines
 
         public string RateString => $"{this.Rate / 100:0.##}";
 
-        public bool SetResource(ResourceList resourceEnum)
+        public void SetResource(int idx)
         {
-            if (!Resource.TryGetResource(resourceEnum, out Resource resource)) return false;
-
+            Resource resource = Resource.GetResource(idx);
             this.Resource = resource;
-            return true;
         }
     }
 }

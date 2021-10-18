@@ -1,23 +1,15 @@
+using System;
 using System.Collections.Generic;
 using Godot;
 
 namespace FactoryPlanner.scripts.resources
 {
-    public enum ResourceList
-    {
-        Any,
-        Iron,
-        Copper,
-    }
-
     public class Resource
     {
-        public const int DefaultId = 0;
-        public static readonly Color DefaultColor = Colors.White;
+        public static readonly Color DefaultColor = Colors.Black;
+        public static readonly Resource Any = new Resource("Any", Colors.White);
 
-        private static int NextId { get; set; } = DefaultId;
-
-        public int Id { get; }
+        public int Id { get; private set; }
         public string Name { get; }
         public Color Color { get; }
 
@@ -25,26 +17,33 @@ namespace FactoryPlanner.scripts.resources
         {
             this.Name = name;
             this.Color = color ?? Colors.Gray;
-            this.Id = NextId++;
         }
 
-        private static readonly Dictionary<ResourceList, Resource> ResourceMap = new Dictionary<ResourceList, Resource>
-        {
-            [ResourceList.Any] = new Resource("Any", DefaultColor),
-            [ResourceList.Iron] = new Resource("Iron", Colors.Silver),
-            [ResourceList.Copper] = new Resource("Copper", Colors.Chocolate),
-        };
+        public static readonly IList<Resource> Resources = new List<Resource>();
 
-        public static bool TryGetResource(ResourceList val, out Resource resource)
+        public static void AddResource(Resource resource)
         {
-            return ResourceMap.TryGetValue(val, out resource);
+            resource.Id = Resources.Count;
+            Resources.Add(resource);
         }
 
-        public static Resource GetResource(ResourceList val)
+        public static void LoadResources()
         {
-            if (TryGetResource(val, out Resource resource)) return resource;
+            if (Resources.Count != 0)
+            {
+                throw new Exception("Cannot re-load FactoryResource list");
+            }
 
-            throw new KeyNotFoundException();
+            AddResource(Any);
+            AddResource(new Resource("Iron Ore", Colors.Silver));
+            AddResource(new Resource("Copper Ore", Colors.Chocolate));
+            AddResource(new Resource("Iron Ingot", Colors.Silver));
+            AddResource(new Resource("Copper Ingot", Colors.Chocolate));
+        }
+
+        public static Resource GetResource(int idx)
+        {
+            return Resources[idx];
         }
     }
 }

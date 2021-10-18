@@ -1,12 +1,16 @@
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using FactoryPlanner.scripts;
 using FactoryPlanner.scripts.machines;
 using FactoryPlanner.scripts.resources;
 using Godot;
+using Resource = FactoryPlanner.scripts.resources.Resource;
 
 public class MinerNode : MachineNode
 {
+    private static readonly int[] ResourceIds = new[] { 1, 2 };
+
     private OptionButton MkOptionButton => this.ControlsContainer.GetChild<HBoxContainer>(2).GetChild<OptionButton>(0);
     private OptionButton PurityOptionButton => this.ControlsContainer.GetChild<HBoxContainer>(2).GetChild<OptionButton>(1);
     private OptionButton ResourceOptionButton => this.ControlsContainer.GetChild<OptionButton>(3);
@@ -41,16 +45,25 @@ public class MinerNode : MachineNode
 
         AddEnumItems(this.MkOptionButton, typeof(LevelList));
         AddEnumItems(this.PurityOptionButton, typeof(PurityList));
-        AddEnumItems(this.ResourceOptionButton, typeof(ResourceList));
+
+        foreach (int resourceId in ResourceIds)
+        {
+            Resource resource = Resource.GetResource(resourceId);
+            AddOption(this.ResourceOptionButton, resource.Name, resource.Id);
+        }
 
         this._on_Resource_Selected(0);
     }
 
     private void _on_Resource_Selected(int index)
     {
-        ResourceList resourceEnumVal = (ResourceList)this.ResourceOptionButton.GetItemMetadata(index);
-        this.Outputs[0].SetResource(resourceEnumVal);
+        int resourceId = (int)this.ResourceOptionButton.GetItemMetadata(index);
+        Resource resource = Resource.GetResource(resourceId);
 
-        this.UpdateSlots();
+        this.UpdateRecipe(new Recipe
+        {
+            Name = resource.Name,
+            Outputs = new List<Throughput>{ new Throughput{ Rate = 3000, Resource = resource } },
+        });
     }
 }

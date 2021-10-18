@@ -8,21 +8,21 @@ using Resource = FactoryPlanner.scripts.resources.Resource;
 
 public class GraphEdit : Godot.GraphEdit
 {
-    // Declare member variables here. Examples:
-    // private int a = 2;
-    // private string b = "text";
-
     // Called when the node enters the scene tree for the first time.
     public override void _Ready()
     {
-        // Set valid resources
-        foreach (ResourceList val in Enum.GetValues(typeof(ResourceList)))
-        {
-            if (!Resource.TryGetResource(val, out Resource resource)) continue;
+        // One-time load resources
+        Resource.LoadResources();
 
+        // Set valid resources
+        foreach (Resource resource in Resource.Resources)
+        {
             // "Any" is always a valid resource
-            this.AddValidConnectionType(0, resource.Id);
-            this.AddValidConnectionType(resource.Id, 0);
+            if (resource != Resource.Any)
+            {
+                this.AddValidConnectionType(Resource.Any.Id, resource.Id);
+                this.AddValidConnectionType(resource.Id, Resource.Any.Id);
+            }
 
             // A Resource can always match itself
             this.AddValidConnectionType(resource.Id, resource.Id);
