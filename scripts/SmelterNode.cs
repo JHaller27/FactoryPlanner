@@ -28,8 +28,8 @@ public class SmelterNode : MachineNode
         this.UpdateRecipe(new Recipe
         {
             Name = "Iron Ingot",
-            Inputs = new List<Throughput> {new Throughput {Rate = 30, Resource = Resource.GetResource(resourceEnumVal)}},
-            Outputs = new List<Throughput> {new Throughput {Rate = 45, Resource = Resource.GetResource(ResourceList.Copper)}},
+            Inputs = new List<Throughput> {new Throughput {Rate = 3000, Resource = Resource.GetResource(resourceEnumVal)}},
+            Outputs = new List<Throughput> {new Throughput {Rate = 4500, Resource = Resource.GetResource(ResourceList.Copper)}},
         });
 
         this.UpdateSlots();
