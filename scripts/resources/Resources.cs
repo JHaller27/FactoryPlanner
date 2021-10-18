@@ -11,7 +11,7 @@ namespace FactoryPlanner.scripts.resources
 
     public class Resource
     {
-        private static int NextId { get; set; } = 0;
+        private static int NextId { get; set; } = 1;
 
         public int Id { get; }
         public string Name { get; }
