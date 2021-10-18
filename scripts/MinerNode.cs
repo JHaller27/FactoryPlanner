@@ -15,28 +15,25 @@ public class MinerNode : Godot.GraphNode
     // Called when the node enters the scene tree for the first time.
     public override void _Ready()
     {
-        foreach (MinerMachine.LevelList level in Enum.GetValues(typeof(MinerMachine.LevelList)))
-        {
-            this.MkOptionButton.AddItem(level.ToString());
-            this.MkOptionButton.SetItemMetadata(this.MkOptionButton.GetItemCount()-1, level);
-        }
-        foreach (MinerMachine.PurityList purity in Enum.GetValues(typeof(MinerMachine.PurityList)))
-        {
-            this.PurityOptionButton.AddItem(purity.ToString());
-            this.PurityOptionButton.SetItemMetadata(this.PurityOptionButton.GetItemCount()-1, purity);
-        }
-        foreach (ResourceList resourceEnumVal in Enum.GetValues(typeof(ResourceList)))
-        {
-            if (!Resource.TryGetResource(resourceEnumVal, out Resource resource)) continue;
+        AddEnumItems(this.MkOptionButton, typeof(MinerMachine.LevelList));
+        AddEnumItems(this.PurityOptionButton, typeof(MinerMachine.PurityList));
+        AddEnumItems(this.ResourceOptionButton, typeof(ResourceList));
 
-            this.ResourceOptionButton.AddItem(resource.Name);
-            this.ResourceOptionButton.SetItemMetadata(this.ResourceOptionButton.GetItemCount()-1, resourceEnumVal);
+        this._on_Resource_Selected(0);
+    }
+
+    private static void AddEnumItems(OptionButton optionButton, Type enumType)
+    {
+        foreach (object val in Enum.GetValues(enumType))
+        {
+            optionButton.AddItem(val.ToString());
+            optionButton.SetItemMetadata(optionButton.GetItemCount()-1, val);
         }
     }
 
     private void _on_Resource_Selected(int index)
     {
-        ResourceList resourceEnumVal = (ResourceList)this.ResourceOptionButton.GetSelectedMetadata();
+        ResourceList resourceEnumVal = (ResourceList)this.ResourceOptionButton.GetItemMetadata(index);
         if (!Resource.TryGetResource(resourceEnumVal, out Resource fromMeta)) return;
 
         this.SetSlot(0, false, -1, Colors.White, true, fromMeta.Id, fromMeta.Color);
