@@ -6,6 +6,7 @@ export_presets.cfg
 
 # Mono-specific ignores
 .mono/
+mono_crash.*
 data_*/
 
 # C#-specific ignore
