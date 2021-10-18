@@ -32,9 +32,15 @@ public class MinerNode : MachineNode
         Impure,
     }
 
+    public MinerNode() : base(0, 1)
+    {
+    }
+
     // Called when the node enters the scene tree for the first time.
     public override void _Ready()
     {
+        base._Ready();
+
         AddEnumItems(this.MkOptionButton, typeof(LevelList));
         AddEnumItems(this.PurityOptionButton, typeof(PurityList));
         AddEnumItems(this.ResourceOptionButton, typeof(ResourceList));
@@ -45,9 +51,8 @@ public class MinerNode : MachineNode
     private void _on_Resource_Selected(int index)
     {
         ResourceList resourceEnumVal = (ResourceList)this.ResourceOptionButton.GetItemMetadata(index);
-        if (!Resource.TryGetResource(resourceEnumVal, out Resource fromMeta)) return;
+        this.Outputs[0].SetResource(resourceEnumVal);
 
-        this.SetSlot(0, this.IsSlotEnabledLeft(0), -1, Colors.White, true, fromMeta.Id, fromMeta.Color);
-        this.OutputLabel.Text = fromMeta.Name;
+        this.UpdateSlots();
     }
 }

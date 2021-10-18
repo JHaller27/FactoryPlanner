@@ -1,6 +1,4 @@
 using Godot;
-using System;
-using FactoryPlanner.scripts;
 using FactoryPlanner.scripts.machines;
 using FactoryPlanner.scripts.resources;
 using Resource = FactoryPlanner.scripts.resources.Resource;
@@ -10,6 +8,10 @@ public class SmelterNode : MachineNode
     private OptionButton ResourceOptionButton => this.GetChild<HBoxContainer>(0).GetChild<VBoxContainer>(1).GetChild<OptionButton>(2);
     private Label InputLabel => this.GetChild<HBoxContainer>(0).GetChild<VBoxContainer>(0).GetChild<Label>(0);
     private Label OutputLabel => this.GetChild<HBoxContainer>(0).GetChild<VBoxContainer>(2).GetChild<Label>(0);
+
+    internal SmelterNode() : base(1, 1)
+    {
+    }
 
     // Called when the node enters the scene tree for the first time.
     public override void _Ready()

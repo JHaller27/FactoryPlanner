@@ -5,13 +5,17 @@ namespace FactoryPlanner.scripts.resources
 {
     public enum ResourceList
     {
+        Any,
         Iron,
         Copper,
     }
 
     public class Resource
     {
-        private static int NextId { get; set; } = 1;
+        public const int DefaultId = 0;
+        public static readonly Color DefaultColor = Colors.White;
+
+        private static int NextId { get; set; } = DefaultId;
 
         public int Id { get; }
         public string Name { get; }
@@ -26,6 +30,7 @@ namespace FactoryPlanner.scripts.resources
 
         private static readonly Dictionary<ResourceList, Resource> ResourceMap = new Dictionary<ResourceList, Resource>
         {
+            [ResourceList.Any] = new Resource("Any", DefaultColor),
             [ResourceList.Iron] = new Resource("Iron", Colors.Silver),
             [ResourceList.Copper] = new Resource("Copper", Colors.Chocolate),
         };
