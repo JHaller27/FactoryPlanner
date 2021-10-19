@@ -1,6 +1,4 @@
-using FactoryPlanner.scripts.resources;
 using Godot;
-using Resource = FactoryPlanner.scripts.resources.Resource;
 
 namespace FactoryPlanner.scripts.machines
 {

@@ -32,7 +32,7 @@ namespace FactoryPlanner.DataReader
         {
             foreach (Resource resource in resources)
             {
-                scripts.resources.Resource.AddResource(new scripts.resources.Resource(resource.Name, color: Color.ColorN(resource.Color)));
+                scripts.machines.Resource.AddResource(new scripts.machines.Resource(resource.Name, color: Color.ColorN(resource.Color)));
             }
         }
 
@@ -50,7 +50,7 @@ namespace FactoryPlanner.DataReader
                     factoryRecipe.Inputs = recipe.Inputs.Select(i => new scripts.machines.Throughput
                     {
                         Rate = i.Rate,
-                        Resource = scripts.resources.Resource.GetResource(i.Resource),
+                        Resource = scripts.machines.Resource.GetResource(i.Resource),
                     }).ToList();
                 }
                 if (recipe.Outputs != null)
@@ -58,7 +58,7 @@ namespace FactoryPlanner.DataReader
                     factoryRecipe.Outputs = recipe.Outputs.Select(o => new scripts.machines.Throughput
                     {
                         Rate = o.Rate,
-                        Resource = scripts.resources.Resource.GetResource(o.Resource),
+                        Resource = scripts.machines.Resource.GetResource(o.Resource),
                     }).ToList();
                 }
 

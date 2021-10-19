@@ -1,8 +1,6 @@
-using System.Collections.Generic;
 using System.ComponentModel;
 using FactoryPlanner.scripts.machines;
 using Godot;
-using Resource = FactoryPlanner.scripts.resources.Resource;
 
 public class MinerNode : MachineNode
 {

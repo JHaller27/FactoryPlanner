@@ -2,7 +2,7 @@ using FactoryPlanner.DataReader;
 using Godot;
 using FactoryPlanner.scripts.machines;
 using Godot.Collections;
-using Resource = FactoryPlanner.scripts.resources.Resource;
+using Resource = FactoryPlanner.scripts.machines.Resource;
 
 public class GraphEdit : Godot.GraphEdit
 {

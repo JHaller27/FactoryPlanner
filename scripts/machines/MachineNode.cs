@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using Godot;
-using Resource = FactoryPlanner.scripts.resources.Resource;
 
 namespace FactoryPlanner.scripts.machines
 {

@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using Godot;
 
-namespace FactoryPlanner.scripts.resources
+namespace FactoryPlanner.scripts.machines
 {
     public class Resource
     {
