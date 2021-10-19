@@ -5,7 +5,7 @@ public class SmelterNode : MachineNode
 {
     private OptionButton RecipeOptionButton => this.ControlsContainer.GetChild<OptionButton>(2);
 
-    private static readonly int[] RecipeIds = { 0, 1 };
+    private static readonly string[] RecipeIds = { "SmeltIronIngot", "SmeltCopperIngot" };
 
     internal SmelterNode() : base(1, 1)
     {
@@ -16,7 +16,7 @@ public class SmelterNode : MachineNode
     {
         base._Ready();
 
-        foreach (int recipeId in RecipeIds)
+        foreach (string recipeId in RecipeIds)
         {
             Recipe recipe = Recipe.GetRecipe(recipeId);
             AddOption(this.RecipeOptionButton, recipe.Name, recipe.Id);
@@ -27,8 +27,8 @@ public class SmelterNode : MachineNode
 
     private void _on_Resource_Selected(int index)
     {
-        int recipeIdx = (int)this.RecipeOptionButton.GetItemMetadata(index);
-        Recipe recipe = Recipe.GetRecipe(recipeIdx);
+        string recipeId = (string)this.RecipeOptionButton.GetItemMetadata(index);
+        Recipe recipe = Recipe.GetRecipe(recipeId);
 
         this.UpdateRecipe(recipe);
     }
