@@ -10,7 +10,7 @@ namespace FactoryPlanner.scripts.machines
         public IList<Throughput> Inputs { get; set; } = new List<Throughput>();
         public IList<Throughput> Outputs { get; set; } = new List<Throughput>();
 
-        public static readonly IList<Recipe> Recipes = new List<Recipe>();
+        private static readonly IList<Recipe> Recipes = new List<Recipe>();
 
         private static void AddRecipe(Recipe resource)
         {
