@@ -16,17 +16,17 @@ public class GraphEdit : Godot.GraphEdit
         Recipe.LoadRecipes();
 
         // Set valid resources
-        foreach (Resource resource in Resource.Resources)
+        foreach (Resource resource in Resource.Resources.Values)
         {
             // "Any" is always a valid resource
             if (resource != Resource.Any)
             {
-                this.AddValidConnectionType(Resource.Any.Id, resource.Id);
-                this.AddValidConnectionType(resource.Id, Resource.Any.Id);
+                this.AddValidConnectionType(Resource.Any.TypeId, resource.TypeId);
+                this.AddValidConnectionType(resource.TypeId, Resource.Any.TypeId);
             }
 
             // A Resource can always match itself
-            this.AddValidConnectionType(resource.Id, resource.Id);
+            this.AddValidConnectionType(resource.TypeId, resource.TypeId);
         }
     }
 

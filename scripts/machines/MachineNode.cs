@@ -84,8 +84,8 @@ namespace FactoryPlanner.scripts.machines
 
                 // Update slots
                 this.SetSlot(slotId,
-                    input != null, input?.TypeId ?? Resource.Any.Id, input?.Color ?? Resource.DefaultColor,
-                    output != null, output?.TypeId ?? Resource.Any.Id, output?.Color ?? Resource.DefaultColor);
+                    input != null, input?.TypeId ?? Resource.Any.TypeId, input?.Color ?? Resource.DefaultColor,
+                    output != null, output?.TypeId ?? Resource.Any.TypeId, output?.Color ?? Resource.DefaultColor);
 
                 // Update labels
                 if (input != null)

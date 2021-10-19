@@ -1,15 +1,12 @@
-using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using FactoryPlanner.scripts;
 using FactoryPlanner.scripts.machines;
-using FactoryPlanner.scripts.resources;
 using Godot;
 using Resource = FactoryPlanner.scripts.resources.Resource;
 
 public class MinerNode : MachineNode
 {
-    private static readonly int[] ResourceIds = { 1, 2 };
+    private static readonly string[] ResourceIds = { "IronOre", "CopperOre" };
 
     private OptionButton MkOptionButton => this.ControlsContainer.GetChild<HBoxContainer>(2).GetChild<OptionButton>(0);
     private OptionButton PurityOptionButton => this.ControlsContainer.GetChild<HBoxContainer>(2).GetChild<OptionButton>(1);
@@ -46,7 +43,7 @@ public class MinerNode : MachineNode
         AddEnumItems(this.MkOptionButton, typeof(LevelList));
         AddEnumItems(this.PurityOptionButton, typeof(PurityList));
 
-        foreach (int resourceId in ResourceIds)
+        foreach (string resourceId in ResourceIds)
         {
             Resource resource = Resource.GetResource(resourceId);
             AddOption(this.ResourceOptionButton, resource.Name, resource.Id);
@@ -57,7 +54,7 @@ public class MinerNode : MachineNode
 
     private void _on_Resource_Selected(int index)
     {
-        int resourceId = (int)this.ResourceOptionButton.GetItemMetadata(index);
+        string resourceId = (string)this.ResourceOptionButton.GetItemMetadata(index);
         Resource resource = Resource.GetResource(resourceId);
 
         this.UpdateRecipe(new Recipe

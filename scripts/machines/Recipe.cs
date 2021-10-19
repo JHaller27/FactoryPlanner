@@ -23,14 +23,14 @@ namespace FactoryPlanner.scripts.machines
             AddRecipe("SmeltIronIngot", new Recipe
             {
                 Name = "Iron Ingot",
-                Inputs = new List<Throughput> { new Throughput { Rate = 3000, Resource = Resource.GetResource(1) } },
-                Outputs = new List<Throughput> { new Throughput { Rate = 3000, Resource = Resource.GetResource(3) } },
+                Inputs = new List<Throughput> { new Throughput { Rate = 3000, Resource = Resource.GetResource("IronOre") } },
+                Outputs = new List<Throughput> { new Throughput { Rate = 3000, Resource = Resource.GetResource("IronIngot") } },
             });
             AddRecipe("SmeltCopperIngot", new Recipe
             {
                 Name = "Copper Ingot",
-                Inputs = new List<Throughput> { new Throughput { Rate = 3000, Resource = Resource.GetResource(2) } },
-                Outputs = new List<Throughput> { new Throughput { Rate = 3000, Resource = Resource.GetResource(4) } },
+                Inputs = new List<Throughput> { new Throughput { Rate = 3000, Resource = Resource.GetResource("CopperOre") } },
+                Outputs = new List<Throughput> { new Throughput { Rate = 3000, Resource = Resource.GetResource("CopperIngot") } },
             });
         }
 
