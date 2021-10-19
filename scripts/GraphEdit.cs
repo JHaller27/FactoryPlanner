@@ -58,6 +58,8 @@ public class GraphEdit : Godot.GraphEdit
             !this.HasInput(toName, toSlot) && !this.HasOutput(fromName, fromSlot))
         {
             this.ConnectNode(fromName, fromSlot, toName, toSlot);
+            fromNode.SetRightNeighbor(toNode, fromSlot);
+            toNode.SetLeftNeighbor(fromNode, toSlot);
         }
     }
 
@@ -88,8 +90,13 @@ public class GraphEdit : Godot.GraphEdit
     }
 
 
-    private void _on_GraphEdit_disconnection_request(string from, int fromSlot, string to, int toSlot)
+    private void _on_GraphEdit_disconnection_request(string fromName, int fromSlot, string toName, int toSlot)
     {
-        this.DisconnectNode(from, fromSlot, to, toSlot);
+        MachineNode fromNode = this.GetNode<MachineNode>(fromName);
+        MachineNode toNode = this.GetNode<MachineNode>(toName);
+
+        this.DisconnectNode(fromName, fromSlot, toName, toSlot);
+        fromNode.SetRightNeighbor(null, fromSlot);
+        toNode.SetLeftNeighbor(null, toSlot);
     }
 }

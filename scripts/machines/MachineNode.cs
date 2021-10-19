@@ -116,6 +116,18 @@ namespace FactoryPlanner.scripts.machines
             optionButton.SetItemMetadata(optionButton.GetItemCount()-1, metaData);
         }
 
+        public void SetLeftNeighbor(MachineNode neighbor, int slotId)
+        {
+            this.Inputs[slotId].Neighbor = neighbor;
+            this.UpdateSlots();
+        }
+
+        public void SetRightNeighbor(MachineNode neighbor, int slotId)
+        {
+            this.Outputs[slotId].Neighbor = neighbor;
+            this.UpdateSlots();
+        }
+
         protected void _on_GraphNode_close_request()
         {
             this.QueueFree();

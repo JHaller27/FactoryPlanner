@@ -1,3 +1,4 @@
+using System;
 using Godot;
 
 namespace FactoryPlanner.scripts.machines
@@ -6,6 +7,7 @@ namespace FactoryPlanner.scripts.machines
     {
         public int Rate { get; set; } = 0;  // In hundreths of Parts Per Minute
         public Resource Resource { get; set; } = Resource.Any;
+        public MachineNode Neighbor { get; set; }
 
         public int TypeId => this.Resource.TypeId;
         public string Name => this.Resource.Name;
