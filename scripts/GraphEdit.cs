@@ -11,6 +11,7 @@ public class GraphEdit : Godot.GraphEdit
     {
         [(int)KeyList.Key1] = "res://Miner.tscn",
         [(int)KeyList.Key2] = "res://Smelter.tscn",
+        [(int)KeyList.Key3] = "res://Constructor.tscn",
     };
 
     // Called when the node enters the scene tree for the first time.
