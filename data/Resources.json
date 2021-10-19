@@ -29,7 +29,7 @@
       "Outputs": [
         {
           "Resource": "Iron Ore",
-          "Rate": 3000
+          "Rate": 6000
         }
       ]
     },
@@ -40,7 +40,7 @@
       "Outputs": [
         {
           "Resource": "Copper Ore",
-          "Rate": 3000
+          "Rate": 6000
         }
       ]
     },
@@ -51,13 +51,13 @@
       "Inputs": [
         {
           "Resource": "Iron Ore",
-          "Rate": 1500
+          "Rate": 3000
         }
       ],
       "Outputs": [
         {
           "Resource": "Iron Ingot",
-          "Rate": 1500
+          "Rate": 3000
         }
       ]
     },
@@ -68,13 +68,13 @@
       "Inputs": [
         {
           "Resource": "Copper Ore",
-          "Rate": 1500
+          "Rate": 3000
         }
       ],
       "Outputs": [
         {
           "Resource": "Copper Ingot",
-          "Rate": 1500
+          "Rate": 3000
         }
       ]
     },
@@ -85,13 +85,13 @@
       "Inputs": [
         {
           "Resource": "Iron Ingot",
-          "Rate": 1500
+          "Rate": 3000
         }
       ],
       "Outputs": [
         {
           "Resource": "Iron Plate",
-          "Rate": 4500
+          "Rate": 2000
         }
       ]
     }
