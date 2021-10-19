@@ -1,8 +1,6 @@
+using FactoryPlanner.DataReader;
 using Godot;
-using System;
-using FactoryPlanner.scripts;
 using FactoryPlanner.scripts.machines;
-using FactoryPlanner.scripts.resources;
 using Godot.Collections;
 using Resource = FactoryPlanner.scripts.resources.Resource;
 
@@ -12,8 +10,7 @@ public class GraphEdit : Godot.GraphEdit
     public override void _Ready()
     {
         // One-time load resources
-        Resource.LoadResources();
-        Recipe.LoadRecipes();
+        Reader.LoadData("res://data/Resources.json");
 
         // Set valid resources
         foreach (Resource resource in Resource.Resources.Values)
@@ -88,6 +85,7 @@ public class GraphEdit : Godot.GraphEdit
 
         return false;
     }
+
 
     private void _on_GraphEdit_disconnection_request(string from, int fromSlot, string to, int toSlot)
     {

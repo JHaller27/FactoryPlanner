@@ -1,0 +1,78 @@
+{
+  "Resources": [
+    {
+      "Name": "Iron Ore",
+      "Color": "Silver"
+    },
+    {
+      "Name": "Copper Ore",
+      "Color": "Chocolate"
+    },
+    {
+      "Name": "Iron Ingot",
+      "Color": "Silver"
+    },
+    {
+      "Name": "Copper Ingot",
+      "Color": "Chocolate"
+    }
+  ],
+  "Recipes": [
+    {
+      "Key": "MineIronOre",
+      "Name": "Iron Ore",
+      "Tags": ["Miner"],
+      "Outputs": [
+        {
+          "Resource": "Iron Ore",
+          "Rate": 3000
+        }
+      ]
+    },
+    {
+      "Key": "MineCopperOre",
+      "Name": "Copper Ore",
+      "Tags": ["Miner"],
+      "Outputs": [
+        {
+          "Resource": "Copper Ore",
+          "Rate": 3000
+        }
+      ]
+    },
+    {
+      "Key": "SmeltIronIngot",
+      "Name": "Iron Ingot",
+      "Tags": ["Smelter"],
+      "Inputs": [
+        {
+          "Resource": "Iron Ore",
+          "Rate": 1500
+        }
+      ],
+      "Outputs": [
+        {
+          "Resource": "Iron Ingot",
+          "Rate": 1500
+        }
+      ]
+    },
+    {
+      "Key": "SmeltCopperIngot",
+      "Name": "Copper Ingot",
+      "Tags": ["Smelter"],
+      "Inputs": [
+        {
+          "Resource": "Copper Ore",
+          "Rate": 1500
+        }
+      ],
+      "Outputs": [
+        {
+          "Resource": "Copper Ingot",
+          "Rate": 1500
+        }
+      ]
+    }
+  ]
+}

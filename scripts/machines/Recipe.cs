@@ -9,18 +9,19 @@ namespace FactoryPlanner.scripts.machines
     {
         public string Id { get; private set; } = string.Empty;
         public string Name { get; set; }
-        private ISet<string> Tags { get; set; } = new HashSet<string>();
+        public ISet<string> Tags { get; set; } = new HashSet<string>();
         public IList<Throughput> Inputs { get; set; } = new List<Throughput>();
         public IList<Throughput> Outputs { get; set; } = new List<Throughput>();
 
         private static readonly IDictionary<string, Recipe> Recipes = new Dictionary<string, Recipe>();
 
-        private static void AddRecipe(string key, Recipe recipe)
+        public static void AddRecipe(string key, Recipe recipe)
         {
             recipe.Id = key;
             Recipes.Add(key, recipe);
         }
 
+        [Obsolete]
         public static void LoadRecipes()
         {
             if (Recipes.Count != 0)

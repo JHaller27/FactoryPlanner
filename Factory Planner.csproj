@@ -7,6 +7,15 @@
     <Content Include="..\..\..\.steam\debian-installation\steamapps\common\Godot Engine\demos\gui\drag_and_drop\drag_drop_script.gd">
       <Link>drag_drop_script.gd</Link>
     </Content>
-    <Content Include="data\Resources.yml" />
+    <Content Include="data\Resources.json" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Remove="DataReader\**" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Remove="DataReader\**" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
   </ItemGroup>
 </Project>

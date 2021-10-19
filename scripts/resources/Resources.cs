@@ -14,7 +14,7 @@ namespace FactoryPlanner.scripts.resources
         public string Name { get; }
         public Color Color { get; }
 
-        private Resource(string name, string id = null, Color? color = null)
+        public Resource(string name, string id = null, Color? color = null)
         {
             this.Name = name;
             this.Id = id ?? this.Name;
@@ -23,12 +23,13 @@ namespace FactoryPlanner.scripts.resources
 
         public static readonly IDictionary<string, Resource> Resources = new Dictionary<string, Resource>();
 
-        private static void AddResource(Resource resource)
+        public static void AddResource(Resource resource)
         {
             resource.TypeId = Resources.Count;
             Resources.Add(resource.Id, resource);
         }
 
+        [Obsolete]
         public static void LoadResources()
         {
             if (Resources.Count != 0)
