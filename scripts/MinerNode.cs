@@ -6,8 +6,6 @@ using Resource = FactoryPlanner.scripts.resources.Resource;
 
 public class MinerNode : MachineNode
 {
-    private static readonly string[] ResourceIds = { "IronOre", "CopperOre" };
-
     private OptionButton MkOptionButton => this.ControlsContainer.GetChild<HBoxContainer>(2).GetChild<OptionButton>(0);
     private OptionButton PurityOptionButton => this.ControlsContainer.GetChild<HBoxContainer>(2).GetChild<OptionButton>(1);
     private OptionButton ResourceOptionButton => this.ControlsContainer.GetChild<OptionButton>(3);
@@ -43,10 +41,9 @@ public class MinerNode : MachineNode
         AddEnumItems(this.MkOptionButton, typeof(LevelList));
         AddEnumItems(this.PurityOptionButton, typeof(PurityList));
 
-        foreach (string resourceId in ResourceIds)
+        foreach (Recipe recipe in Recipe.GetRecipesWithTags("Miner"))
         {
-            Resource resource = Resource.GetResource(resourceId);
-            AddOption(this.ResourceOptionButton, resource.Name, resource.Id);
+            AddOption(this.ResourceOptionButton, recipe.Name, recipe.Id);
         }
 
         this._on_Resource_Selected(0);
@@ -54,13 +51,9 @@ public class MinerNode : MachineNode
 
     private void _on_Resource_Selected(int index)
     {
-        string resourceId = (string)this.ResourceOptionButton.GetItemMetadata(index);
-        Resource resource = Resource.GetResource(resourceId);
+        string recipeId = (string)this.ResourceOptionButton.GetItemMetadata(index);
+        Recipe recipe = Recipe.GetRecipe(recipeId);
 
-        this.UpdateRecipe(new Recipe
-        {
-            Name = resource.Name,
-            Outputs = new List<Throughput>{ new Throughput{ Rate = 3000, Resource = resource } },
-        });
+        this.UpdateRecipe(recipe);
     }
 }

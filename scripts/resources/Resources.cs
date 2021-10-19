@@ -14,10 +14,10 @@ namespace FactoryPlanner.scripts.resources
         public string Name { get; }
         public Color Color { get; }
 
-        private Resource(string id, string name, Color? color = null)
+        private Resource(string name, string id = null, Color? color = null)
         {
-            this.Id = id;
             this.Name = name;
+            this.Id = id ?? this.Name;
             this.Color = color ?? Colors.Gray;
         }
 
@@ -37,10 +37,10 @@ namespace FactoryPlanner.scripts.resources
             }
 
             AddResource(Any);
-            AddResource(new Resource("IronOre", "Iron Ore", Colors.Silver));
-            AddResource(new Resource("CopperOre", "Copper Ore", Colors.Chocolate));
-            AddResource(new Resource("IronIngot", "Iron Ingot", Colors.Silver));
-            AddResource(new Resource("CopperIngot", "Copper Ingot", Colors.Chocolate));
+            AddResource(new Resource("Iron Ore", color: Colors.Silver));
+            AddResource(new Resource("Copper Ore", color: Colors.Chocolate));
+            AddResource(new Resource("Iron Ingot", color: Colors.Silver));
+            AddResource(new Resource("Copper Ingot", color: Colors.Chocolate));
         }
 
         public static Resource GetResource(string id)
