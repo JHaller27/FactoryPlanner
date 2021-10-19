@@ -1,0 +1,48 @@
+resources:
+  - name: Iron Ore
+    color: Silver
+
+  - name: Copper Ore
+    color: Chocolate
+
+  - name: Iron Ingot
+    color: Silver
+
+  - name: Copper Ingot
+    color: Chocolate
+
+
+recipes:
+  - key: MineIronOre
+    name: Iron Ore
+    tags: Miner
+    outputs:
+      - resource: Iron Ore
+        rate: 3000
+
+  - key: MineCopperOre
+    name: Copper Ore
+    tags: Miner
+    outputs:
+      - resource: Copper Ore
+        rate: 3000
+
+  - key: SmeltIronIngot
+    name: Iron Ingot
+    tags: Smelter
+    inputs:
+      - resource: Iron Ore
+        rate: 1500
+    outputs:
+      - resource: Iron Ingot
+        rate: 1500
+
+  - key: SmeltCopperIngot
+    name: Iron Ingot
+    tags: Smelter
+    inputs:
+      - resources: Copper Ore
+        rate: 1500
+    outputs:
+      - resources: Copper Ingot
+        rate: 1500
