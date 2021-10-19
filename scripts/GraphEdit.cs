@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using FactoryPlanner.DataReader;
 using Godot;
 using FactoryPlanner.scripts.machines;
@@ -6,6 +7,12 @@ using Resource = FactoryPlanner.scripts.machines.Resource;
 
 public class GraphEdit : Godot.GraphEdit
 {
+    private static IDictionary<uint, string> KeyMachinePathMap = new Godot.Collections.Dictionary<uint, string>
+    {
+        [(int)KeyList.Key1] = "res://Miner.tscn",
+        [(int)KeyList.Key2] = "res://Smelter.tscn",
+    };
+
     // Called when the node enters the scene tree for the first time.
     public override void _Ready()
     {
@@ -31,16 +38,9 @@ public class GraphEdit : Godot.GraphEdit
     {
         if (inputEvent is InputEventKey eventKey && eventKey.Pressed)
         {
-            if (eventKey.Scancode == (int)KeyList.Key1)
+            if (KeyMachinePathMap.TryGetValue(eventKey.Scancode, out string path))
             {
-                PackedScene graphScene = ResourceLoader.Load<PackedScene>("res://Miner.tscn");
-                GraphNode graphNode = (GraphNode)graphScene.Instance();
-
-                this.AddChild(graphNode);
-            }
-            else if (eventKey.Scancode == (int)KeyList.Key2)
-            {
-                PackedScene graphScene = ResourceLoader.Load<PackedScene>("res://Smelter.tscn");
+                PackedScene graphScene = ResourceLoader.Load<PackedScene>(path);
                 GraphNode graphNode = (GraphNode)graphScene.Instance();
 
                 this.AddChild(graphNode);
