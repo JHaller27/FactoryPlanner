@@ -19,6 +19,26 @@
     {
       "Name": "Iron Plate",
       "Color": "Silver"
+    },
+    {
+      "Name": "Iron Rod",
+      "Color": "Silver"
+    },
+    {
+      "Name": "Wire",
+      "Color": "Chocolate"
+    },
+    {
+      "Name": "Copper Sheet",
+      "Color": "Chocolate"
+    },
+    {
+      "Name": "Limestone",
+      "Color": "Bisque"
+    },
+    {
+      "Name": "Concrete",
+      "Color": "Bisque"
     }
   ],
   "Recipes": [
@@ -40,6 +60,17 @@
       "Outputs": [
         {
           "Resource": "Copper Ore",
+          "Rate": 6000
+        }
+      ]
+    },
+    {
+      "Key": "MineLimestone",
+      "Name": "Limestone",
+      "Tags": ["Miner"],
+      "Outputs": [
+        {
+          "Resource": "Limestone",
           "Rate": 6000
         }
       ]
@@ -92,6 +123,74 @@
         {
           "Resource": "Iron Plate",
           "Rate": 2000
+        }
+      ]
+    },
+    {
+      "Key": "ConstructCopperWire",
+      "Name": "Wire",
+      "Tags": ["Constructor"],
+      "Inputs": [
+        {
+          "Resource": "Copper Ingot",
+          "Rate": 1500
+        }
+      ],
+      "Outputs": [
+        {
+          "Resource": "Wire",
+          "Rate": 3000
+        }
+      ]
+    },
+    {
+      "Key": "ConstructCopperSheet",
+      "Name": "Copper Sheet",
+      "Tags": ["Constructor"],
+      "Inputs": [
+        {
+          "Resource": "Copper Ingot",
+          "Rate": 2000
+        }
+      ],
+      "Outputs": [
+        {
+          "Resource": "Copper Sheet",
+          "Rate": 1000
+        }
+      ]
+    },
+    {
+      "Key": "ConstructIronRods",
+      "Name": "Iron Rods",
+      "Tags": ["Constructor"],
+      "Inputs": [
+        {
+          "Resource": "Iron Ingot",
+          "Rate": 1500
+        }
+      ],
+      "Outputs": [
+        {
+          "Resource": "Iron Rod",
+          "Rate": 1500
+        }
+      ]
+    },
+    {
+      "Key": "ConstructConcrete",
+      "Name": "Concrete",
+      "Tags": ["Constructor"],
+      "Inputs": [
+        {
+          "Resource": "Limestone",
+          "Rate": 1500
+        }
+      ],
+      "Outputs": [
+        {
+          "Resource": "Concrete",
+          "Rate": 4500
         }
       ]
     }
