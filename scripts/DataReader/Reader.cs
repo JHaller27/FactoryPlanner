@@ -3,6 +3,8 @@ using System.Diagnostics;
 using System.Linq;
 using Godot;
 using Newtonsoft.Json;
+using MachineResource = FactoryPlanner.scripts.machines.Resource;
+using MachineRecipe = FactoryPlanner.scripts.machines.Recipe;
 
 namespace FactoryPlanner.DataReader
 {
