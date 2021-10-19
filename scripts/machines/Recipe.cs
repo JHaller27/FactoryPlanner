@@ -20,42 +20,6 @@ namespace FactoryPlanner.scripts.machines
             Recipes.Add(key, recipe);
         }
 
-        [Obsolete]
-        public static void LoadRecipes()
-        {
-            if (Recipes.Count != 0)
-            {
-                throw new Exception("Cannot re-load Recipe list");
-            }
-
-            AddRecipe("MineIronOre", new Recipe
-            {
-                Name = "Iron Ore",
-                Outputs = new List<Throughput> { new Throughput { Rate = 3000, Resource = Resource.GetResource("Iron Ore") } },
-                Tags = new HashSet<string>{"Miner"},
-            });
-            AddRecipe("MineCopperOre", new Recipe
-            {
-                Name = "Copper Ore",
-                Outputs = new List<Throughput> { new Throughput { Rate = 3000, Resource = Resource.GetResource("Copper Ore") } },
-                Tags = new HashSet<string>{"Miner"},
-            });
-            AddRecipe("SmeltIronIngot", new Recipe
-            {
-                Name = "Iron Ingot",
-                Inputs = new List<Throughput> { new Throughput { Rate = 3000, Resource = Resource.GetResource("Iron Ore") } },
-                Outputs = new List<Throughput> { new Throughput { Rate = 3000, Resource = Resource.GetResource("Iron Ingot") } },
-                Tags = new HashSet<string>{"Smelter"},
-            });
-            AddRecipe("SmeltCopperIngot", new Recipe
-            {
-                Name = "Copper Ingot",
-                Inputs = new List<Throughput> { new Throughput { Rate = 3000, Resource = Resource.GetResource("Copper Ore") } },
-                Outputs = new List<Throughput> { new Throughput { Rate = 3000, Resource = Resource.GetResource("Copper Ingot") } },
-                Tags = new HashSet<string>{"Smelter"},
-            });
-        }
-
         public static IEnumerable<Recipe> GetRecipesWithTags(params string[] tags)
         {
             return Recipes.Values

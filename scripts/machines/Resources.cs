@@ -29,21 +29,6 @@ namespace FactoryPlanner.scripts.machines
             Resources.Add(resource.Id, resource);
         }
 
-        [Obsolete]
-        public static void LoadResources()
-        {
-            if (Resources.Count != 0)
-            {
-                throw new Exception("Cannot re-load FactoryResource list");
-            }
-
-            AddResource(Any);
-            AddResource(new Resource("Iron Ore", color: Colors.Silver));
-            AddResource(new Resource("Copper Ore", color: Colors.Chocolate));
-            AddResource(new Resource("Iron Ingot", color: Colors.Silver));
-            AddResource(new Resource("Copper Ingot", color: Colors.Chocolate));
-        }
-
         public static Resource GetResource(string id)
         {
             return Resources[id];
