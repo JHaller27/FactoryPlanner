@@ -15,6 +15,10 @@
     {
       "Name": "Copper Ingot",
       "Color": "Chocolate"
+    },
+    {
+      "Name": "Iron Plate",
+      "Color": "Silver"
     }
   ],
   "Recipes": [
@@ -71,6 +75,23 @@
         {
           "Resource": "Copper Ingot",
           "Rate": 1500
+        }
+      ]
+    },
+    {
+      "Key": "ConstructIronPlates",
+      "Name": "Iron Plates",
+      "Tags": ["Constructor"],
+      "Inputs": [
+        {
+          "Resource": "Iron Ingot",
+          "Rate": 1500
+        }
+      ],
+      "Outputs": [
+        {
+          "Resource": "Iron Plate",
+          "Rate": 4500
         }
       ]
     }
