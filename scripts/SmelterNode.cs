@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using Godot;
 using FactoryPlanner.scripts.machines;
 
@@ -6,7 +5,7 @@ public class SmelterNode : MachineNode
 {
     private OptionButton RecipeOptionButton => this.ControlsContainer.GetChild<OptionButton>(2);
 
-    private static readonly int[] RecipeIds = { 1, 2 };
+    private static readonly int[] RecipeIds = { 0, 1 };
 
     internal SmelterNode() : base(1, 1)
     {
@@ -17,9 +16,9 @@ public class SmelterNode : MachineNode
     {
         base._Ready();
 
-        foreach (int resourceId in RecipeIds)
+        foreach (int recipeId in RecipeIds)
         {
-            Recipe recipe = Recipe.GetRecipe(resourceId);
+            Recipe recipe = Recipe.GetRecipe(recipeId);
             AddOption(this.RecipeOptionButton, recipe.Name, recipe.Id);
         }
 
