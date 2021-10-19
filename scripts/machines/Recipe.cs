@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using FactoryPlanner.scripts.resources;
 
@@ -20,6 +21,11 @@ namespace FactoryPlanner.scripts.machines
 
         public static void LoadRecipes()
         {
+            if (Recipes.Count != 0)
+            {
+                throw new Exception("Cannot re-load Recipe list");
+            }
+
             AddRecipe("SmeltIronIngot", new Recipe
             {
                 Name = "Iron Ingot",
