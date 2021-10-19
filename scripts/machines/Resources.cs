@@ -7,7 +7,7 @@ namespace FactoryPlanner.scripts.machines
     public class Resource
     {
         public static readonly Color DefaultColor = Colors.Black;
-        public static readonly Resource Any = new Resource("Any", "Any", Colors.White);
+        public static readonly Resource Any = new Resource("Any", "Any", Colors.White) { TypeId = -1 };
 
         public int TypeId { get; private set; }
         public string Id { get; private set; }
