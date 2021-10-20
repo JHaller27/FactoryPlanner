@@ -1,13 +1,17 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Godot;
 
 namespace FactoryPlanner.scripts.machines
 {
     public class MachineNode : GraphNode
     {
+        public uint Efficiency { get; private set; }
+        private decimal EfficiencyPercentage => (decimal)this.Efficiency / 100;
+
         private IList<Throughput> Inputs { get; }
-        protected IList<Throughput> Outputs { get; }
+        private IList<Throughput> Outputs { get; }
 
         private VBoxContainer InputContainer => this.GetChild<HBoxContainer>(0).GetChild<VBoxContainer>(0);
         protected VBoxContainer ControlsContainer => this.GetChild<HBoxContainer>(0).GetChild<VBoxContainer>(1);
@@ -21,13 +25,13 @@ namespace FactoryPlanner.scripts.machines
             this.Inputs = new List<Throughput>();
             for (int i = 0; i < numInputs; i++)
             {
-                this.Inputs.Add(new Throughput());
+                this.Inputs.Add(new Input());
             }
 
             this.Outputs = new List<Throughput>();
             for (int i = 0; i < numOutputs; i++)
             {
-                this.Outputs.Add(new Throughput());
+                this.Outputs.Add(new Output(this));
             }
         }
 
@@ -51,8 +55,6 @@ namespace FactoryPlanner.scripts.machines
 
                 this.OutputContainer.AddChild(slotLabelContainer);
             }
-
-            this.UpdateSlots();
         }
 
         protected void UpdateRecipe(Recipe recipe)
@@ -60,15 +62,15 @@ namespace FactoryPlanner.scripts.machines
             for (int i = 0; i < recipe.Inputs.Count; i++)
             {
                 this.Inputs[i].Resource = recipe.Inputs[i].Resource;
-                this.Inputs[i].Rate = recipe.Inputs[i].Rate;
+                this.Inputs[i].BaseRate = recipe.Inputs[i].BaseRate;
             }
             for (int i = 0; i < recipe.Outputs.Count; i++)
             {
                 this.Outputs[i].Resource = recipe.Outputs[i].Resource;
-                this.Outputs[i].Rate = recipe.Outputs[i].Rate;
+                this.Outputs[i].BaseRate = recipe.Outputs[i].BaseRate;
             }
 
-            this.UpdateSlots();
+            this.UpdateEfficiency();
         }
 
         protected void UpdateSlots()
@@ -116,15 +118,33 @@ namespace FactoryPlanner.scripts.machines
             optionButton.SetItemMetadata(optionButton.GetItemCount()-1, metaData);
         }
 
-        public void SetLeftNeighbor(MachineNode neighbor, int slotId)
+        public void ConnectTo(int fromSlot, MachineNode to, int toSlot)
         {
-            this.Inputs[slotId].Neighbor = neighbor;
-            this.UpdateSlots();
+            this.Outputs[fromSlot].SetNeighbor(to.Inputs[toSlot]);
+            to.Inputs[toSlot].SetNeighbor(this.Outputs[fromSlot]);
+
+            this.UpdateEfficiency();
+            to.UpdateEfficiency();
         }
 
-        public void SetRightNeighbor(MachineNode neighbor, int slotId)
+        public void DisconnectFrom(int fromSlot, MachineNode to, int toSlot)
         {
-            this.Outputs[slotId].Neighbor = neighbor;
+            this.Outputs[fromSlot].SetNeighbor(null);
+            to.Inputs[toSlot].SetNeighbor(null);
+
+            this.UpdateEfficiency();
+            to.UpdateEfficiency();
+        }
+
+        private void UpdateEfficiency()
+        {
+            // If I have no inputs, I must have 100% efficiency (my output must be set manually)
+            uint inputEfficiency = this.Inputs.Any() ? this.Inputs.Select(i => i.CalculateEfficiency()).Min() : 10000;
+
+            // If I have no outputs, I must have 100% efficiency
+            uint outputEfficiency = this.Outputs.Any() ? this.Outputs.Select(o => o.CalculateEfficiency()).Min() : 10000;
+
+            this.Efficiency = Math.Min(inputEfficiency, outputEfficiency);
             this.UpdateSlots();
         }
 

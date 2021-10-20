@@ -49,19 +49,19 @@ namespace FactoryPlanner.DataReader
                 };
                 if (recipe.Inputs != null)
                 {
-                    factoryRecipe.Inputs = recipe.Inputs.Select(i => new scripts.machines.Throughput
+                    factoryRecipe.Inputs = recipe.Inputs.Select(i => new scripts.machines.Input
                     {
-                        Rate = i.Rate,
+                        BaseRate = i.Rate,
                         Resource = scripts.machines.Resource.GetResource(i.Resource),
-                    }).ToList();
+                    } as scripts.machines.Throughput).ToList();
                 }
                 if (recipe.Outputs != null)
                 {
-                    factoryRecipe.Outputs = recipe.Outputs.Select(o => new scripts.machines.Throughput
+                    factoryRecipe.Outputs = recipe.Outputs.Select(o => new scripts.machines.Output(null)
                     {
-                        Rate = o.Rate,
+                        BaseRate = o.Rate,
                         Resource = scripts.machines.Resource.GetResource(o.Resource),
-                    }).ToList();
+                    } as scripts.machines.Throughput).ToList();
                 }
 
                 scripts.machines.Recipe.AddRecipe(recipe.Key, factoryRecipe);

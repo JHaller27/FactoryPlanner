@@ -12,7 +12,7 @@ namespace FactoryPlanner.DataReader
     public class Throughput
     {
         public string Resource { get; set; }
-        public int Rate { get; set; }
+        public uint Rate { get; set; }
     }
 
     public class Recipe
