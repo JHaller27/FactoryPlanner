@@ -16,6 +16,7 @@ namespace FactoryPlanner.scripts.machines
         private VBoxContainer InputContainer => this.GetChild<HBoxContainer>(0).GetChild<VBoxContainer>(0);
         protected VBoxContainer ControlsContainer => this.GetChild<HBoxContainer>(0).GetChild<VBoxContainer>(1);
         private VBoxContainer OutputContainer => this.GetChild<HBoxContainer>(0).GetChild<VBoxContainer>(2);
+        public HSlider EfficiencySlider => this.ControlsContainer.GetChild<HSlider>(1);
 
         private Label ResourceNameLabel(VBoxContainer container, int slotId) => container.GetChild<VBoxContainer>(slotId).GetChild<Label>(0);
         private Label RateLabel(VBoxContainer container, int slotId) => container.GetChild<VBoxContainer>(slotId).GetChild<Label>(1);
@@ -101,6 +102,8 @@ namespace FactoryPlanner.scripts.machines
                     this.RateLabel(this.OutputContainer, slotId).Text = output.RateString;
                 }
             }
+
+            this.EfficiencySlider.Value = (int)this.EfficiencyPercentage;
         }
 
         protected static void AddEnumItems(OptionButton optionButton, Type enumType)
