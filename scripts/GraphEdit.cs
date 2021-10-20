@@ -7,7 +7,7 @@ using Resource = FactoryPlanner.scripts.machines.Resource;
 
 public class GraphEdit : Godot.GraphEdit
 {
-    private static IDictionary<uint, string> KeyMachinePathMap = new Godot.Collections.Dictionary<uint, string>
+    private static readonly IDictionary<uint, string> KeyMachinePathMap = new Godot.Collections.Dictionary<uint, string>
     {
         [(int)KeyList.Key1] = "res://Miner.tscn",
         [(int)KeyList.Key2] = "res://Smelter.tscn",
@@ -88,7 +88,6 @@ public class GraphEdit : Godot.GraphEdit
 
         return false;
     }
-
 
     private void _on_GraphEdit_disconnection_request(string fromName, int fromSlot, string toName, int toSlot)
     {
