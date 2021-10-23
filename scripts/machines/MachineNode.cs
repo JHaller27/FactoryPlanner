@@ -7,8 +7,9 @@ namespace FactoryPlanner.scripts.machines
 {
     public class MachineNode : GraphNode
     {
-        public uint Efficiency { get; private set; }
+        private uint Efficiency { get; set; }
         private decimal EfficiencyPercentage => (decimal)this.Efficiency / 100;
+        private decimal EfficiencyMult() => (decimal)this.Efficiency / (100 * Utils.Precision);
 
         private IList<Throughput> Inputs { get; }
         private IList<Throughput> Outputs { get; }
@@ -26,13 +27,13 @@ namespace FactoryPlanner.scripts.machines
             this.Inputs = new List<Throughput>();
             for (int i = 0; i < numInputs; i++)
             {
-                this.Inputs.Add(new Input());
+                this.Inputs.Add(new Input(0, this));
             }
 
             this.Outputs = new List<Throughput>();
             for (int i = 0; i < numOutputs; i++)
             {
-                this.Outputs.Add(new Output(this));
+                this.Outputs.Add(new Output(0, this));
             }
         }
 
@@ -63,15 +64,15 @@ namespace FactoryPlanner.scripts.machines
             for (int i = 0; i < recipe.Inputs.Count; i++)
             {
                 this.Inputs[i].Resource = recipe.Inputs[i].Resource;
-                this.Inputs[i].BaseRate = recipe.Inputs[i].BaseRate;
+                this.Inputs[i].Capacity = recipe.Inputs[i].Capacity;
             }
             for (int i = 0; i < recipe.Outputs.Count; i++)
             {
                 this.Outputs[i].Resource = recipe.Outputs[i].Resource;
-                this.Outputs[i].BaseRate = recipe.Outputs[i].BaseRate;
+                this.Outputs[i].Capacity = recipe.Outputs[i].Capacity;
             }
 
-            this.UpdateEfficiency();
+            this.UpdateFlowFromInputs();
         }
 
         protected void UpdateSlots()
@@ -121,34 +122,63 @@ namespace FactoryPlanner.scripts.machines
             optionButton.SetItemMetadata(optionButton.GetItemCount()-1, metaData);
         }
 
-        public void ConnectTo(int fromSlot, MachineNode to, int toSlot)
+        public void ConnectTo(int fromSlot, MachineNode toMachine, int toSlot)
         {
-            this.Outputs[fromSlot].SetNeighbor(to.Inputs[toSlot]);
-            to.Inputs[toSlot].SetNeighbor(this.Outputs[fromSlot]);
+            this.Outputs[fromSlot].SetNeighbor(toMachine.Inputs[toSlot]);
+            toMachine.Inputs[toSlot].SetNeighbor(this.Outputs[fromSlot]);
 
-            this.UpdateEfficiency();
-            to.UpdateEfficiency();
+            toMachine.UpdateFlowFromInputs();
         }
 
-        public void DisconnectFrom(int fromSlot, MachineNode to, int toSlot)
+        public void DisconnectFrom(int fromSlot, MachineNode toMachine, int toSlot)
         {
             this.Outputs[fromSlot].SetNeighbor(null);
-            to.Inputs[toSlot].SetNeighbor(null);
+            toMachine.Inputs[toSlot].SetNeighbor(null);
 
-            this.UpdateEfficiency();
-            to.UpdateEfficiency();
+            this.UpdateFlowFromInputs();
+            toMachine.UpdateFlowFromInputs();
         }
 
-        private void UpdateEfficiency()
+        private void UpdateFlowFromInputs()
         {
-            // If I have no inputs, I must have 100% efficiency (my output must be set manually)
-            uint inputEfficiency = this.Inputs.Any() ? this.Inputs.Select(i => i.CalculateEfficiency()).Min() : 10000;
+            // Calculate this Machine's efficiency where...
+            // ...no inputs = 100% automatically
+            if (!this.Inputs.Any())
+            {
+                this.Efficiency = 100 * Utils.Precision;
+            }
+            // ...at least 1 unconnected input = 0% automatically
+            else if (this.Inputs.Any(i => i.Neighbor == null))
+            {
+                this.Efficiency = 0;
+            }
+            else
+            {
+                // ...back-fill inputs' flows
+                foreach (Input input in this.Inputs)
+                {
+                    input.Neighbor.Parent.UpdateFlowFromInputs();
+                }
 
-            // If I have no outputs, I must have 100% efficiency
-            uint outputEfficiency = this.Outputs.Any() ? this.Outputs.Select(o => o.CalculateEfficiency()).Min() : 10000;
+                this.Efficiency = this.Inputs.Select(i => i.Efficiency()).Min();
+            }
 
-            this.Efficiency = Math.Min(inputEfficiency, outputEfficiency);
+            // Once we have our efficiency, we can use it to calculate our outputs' flows
+            foreach (Output output in this.Outputs)
+            {
+                output.CalculateFlow(this.EfficiencyMult());
+            }
+
             this.UpdateSlots();
+        }
+
+        public void UpdateFlowFromOutputs()
+        {
+            this.Efficiency = this.Outputs.Select(o => o.Efficiency()).Min();
+            foreach (Input input in this.Inputs)
+            {
+                input.CalculateFlow(this.EfficiencyMult());
+            }
         }
 
         protected void _on_GraphNode_close_request()

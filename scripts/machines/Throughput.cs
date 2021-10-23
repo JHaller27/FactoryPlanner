@@ -5,22 +5,37 @@ namespace FactoryPlanner.scripts.machines
 {
     public abstract class Throughput
     {
-        public uint BaseRate { get; set; }  // In hundreths of Parts Per Minute
         public Resource Resource { get; set; } = Resource.Any;
-        protected Throughput Neighbor { get; set; }
+
+        public uint Capacity { get; set; }
+        public uint Flow { get; set; }
+        public Throughput Neighbor { get; private set; }
+        public MachineNode Parent { get; }
+
+        public uint Efficiency() => this.Flow * 100 * Utils.Precision / this.Capacity;
 
         public int TypeId => this.Resource.TypeId;
         public string Name => this.Resource.Name;
         public Color Color => this.Resource.Color;
 
-        public string RateString => $"{this.EffectiveRate() / 100:0.##} / {this.BaseRate / 100:0.##}";
+        public string RateString => $"{this.Flow / Utils.Precision:0.##} / {this.Capacity / Utils.Precision:0.##}";
 
-        public abstract uint EffectiveRate();
-        public abstract uint CalculateEfficiency();
+        protected Throughput(uint capacity, MachineNode parent)
+        {
+            this.Capacity = capacity;
+            this.Parent = parent;
+
+            this.Flow = this.Capacity;
+        }
 
         public void SetNeighbor(Throughput neighbor)
         {
             this.Neighbor = neighbor;
+        }
+
+        public virtual void CalculateFlow(decimal efficiencyMult)
+        {
+            this.Flow = (uint)(this.Capacity * efficiencyMult);
         }
 
         public void SetResource(string id)
@@ -28,40 +43,58 @@ namespace FactoryPlanner.scripts.machines
             Resource resource = Resource.GetResource(id);
             this.Resource = resource;
         }
+
+        public override string ToString() => this.RateString;
     }
 
     public class Input : Throughput
     {
-        public override uint EffectiveRate()
+        public Input(uint capacity, MachineNode parent) : base(capacity, parent)
         {
-            return Math.Min(this.Neighbor?.EffectiveRate() ?? 0, this.BaseRate);
         }
 
-        public override uint CalculateEfficiency()
+        public override void CalculateFlow(decimal efficiencyMult)
         {
-            return this.EffectiveRate() * 10000 / this.BaseRate;
+            base.CalculateFlow(efficiencyMult);
+
+            if (this.Neighbor == null) return;
+
+            this.Neighbor.Flow = this.Flow;
+            this.Neighbor.Parent.UpdateFlowFromOutputs();
         }
     }
 
     public class Output : Throughput
     {
-        private MachineNode Parent { get; }
-        private uint Efficiency => this.Parent.Efficiency;
-
-        public Output(MachineNode parent)
+        public Output(uint capacity, MachineNode parent) : base(capacity, parent)
         {
-            this.Parent = parent;
         }
 
-        public override uint EffectiveRate()
+        public override void CalculateFlow(decimal efficiencyMult)
         {
-            const uint divisor = 100 * 100; // 100 for percent, then 100 for precision
-            return this.BaseRate * this.Efficiency / divisor;
+            base.CalculateFlow(efficiencyMult);
+            if (this.Neighbor == null) return;
+
+            if (this.Neighbor.Capacity >= this.Flow)
+            {
+                this.Neighbor.Flow = this.Flow;
+                return;
+            }
+
+            this.Flow = this.Neighbor.Capacity;
+            this.Neighbor.Flow = this.Neighbor.Capacity;
+            this.Parent.UpdateFlowFromOutputs();
         }
 
-        public override uint CalculateEfficiency()
+        public override string ToString()
         {
-            return this.Neighbor == null ? 10000 : this.Neighbor.EffectiveRate() * 10000 / this.BaseRate;
+            string s = base.ToString();
+            if (this.Neighbor != null)
+            {
+                s += " -> " + this.Neighbor.Parent;
+            }
+
+            return s;
         }
     }
 }
