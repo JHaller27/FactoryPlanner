@@ -136,7 +136,9 @@ namespace FactoryPlanner.scripts.machines
             toMachine.Inputs[toSlot].SetNeighbor(null);
 
             this.UpdateFlowFromInputs();
+            this.UpdateFlowFromOutputs();
             toMachine.UpdateFlowFromInputs();
+            toMachine.UpdateFlowFromOutputs();
         }
 
         private void UpdateFlowFromInputs()
@@ -179,6 +181,8 @@ namespace FactoryPlanner.scripts.machines
             {
                 input.CalculateFlow(this.EfficiencyMult());
             }
+
+            this.UpdateSlots();
         }
 
         protected void _on_GraphNode_close_request()
