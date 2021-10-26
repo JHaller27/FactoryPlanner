@@ -21,7 +21,7 @@ namespace FactoryPlanner.scripts.machines
             this.Color = color ?? Colors.Gray;
         }
 
-        public static readonly IDictionary<string, Resource> Resources = new Dictionary<string, Resource>();
+        public static readonly IDictionary<string, Resource> Resources = new Dictionary<string, Resource>{ [Any.Id] = Any };
 
         public static void AddResource(Resource resource)
         {

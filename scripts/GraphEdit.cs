@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using FactoryPlanner.DataReader;
+using FactoryPlanner.scripts.MachineNetwork;
 using Godot;
 using FactoryPlanner.scripts.machines;
 using Godot.Collections;
@@ -7,6 +8,7 @@ using Resource = FactoryPlanner.scripts.machines.Resource;
 
 public class GraphEdit : Godot.GraphEdit
 {
+    private MachineNetwork Network { get; } = new MachineNetwork();
     private static readonly IDictionary<uint, string> KeyMachinePathMap = new Godot.Collections.Dictionary<uint, string>
     {
         [(int)KeyList.Key1] = "res://Miner.tscn",
@@ -42,9 +44,11 @@ public class GraphEdit : Godot.GraphEdit
             if (KeyMachinePathMap.TryGetValue(eventKey.Scancode, out string path))
             {
                 PackedScene graphScene = ResourceLoader.Load<PackedScene>(path);
-                GraphNode graphNode = (GraphNode)graphScene.Instance();
+                MachineNode graphNode = (MachineNode)graphScene.Instance();
 
                 this.AddChild(graphNode);
+                this.Network.AddMachine(graphNode.MachineModel);
+                graphNode.UpdateSlots();
             }
         }
     }
@@ -58,7 +62,10 @@ public class GraphEdit : Godot.GraphEdit
             !this.HasInput(toName, toSlot) && !this.HasOutput(fromName, fromSlot))
         {
             this.ConnectNode(fromName, fromSlot, toName, toSlot);
-            fromNode.ConnectTo(fromSlot, toNode, toSlot);
+            this.Network.ConnectMachines(fromNode.MachineModel, fromSlot, toNode.MachineModel, toSlot);
+
+            fromNode.UpdateSlots();
+            toNode.UpdateSlots();
         }
     }
 
@@ -94,6 +101,9 @@ public class GraphEdit : Godot.GraphEdit
         MachineNode toNode = this.GetNode<MachineNode>(toName);
 
         this.DisconnectNode(fromName, fromSlot, toName, toSlot);
-        fromNode.DisconnectFrom(fromSlot, toNode, toSlot);
+        this.Network.DisconnectMachines(fromNode.MachineModel, fromSlot, toNode.MachineModel, toSlot);
+
+        fromNode.UpdateSlots();
+        toNode.UpdateSlots();
     }
 }

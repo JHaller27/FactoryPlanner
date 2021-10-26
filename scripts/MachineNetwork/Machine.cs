@@ -5,18 +5,26 @@ namespace FactoryPlanner.scripts.MachineNetwork
 {
     public class Machine
     {
-        public const uint Precision = 100;
+        private IList<Input> Inputs { get; } = new List<Input>();
+        public int CountInputs => this.Inputs.Count;
 
-        private IList<Input> Inputs { get; }
-        private IList<Output> Outputs { get; }
+        private IList<Output> Outputs { get; } = new List<Output>();
+        public int CountOutputs => this.Outputs.Count;
+
         private uint Efficiency { get; set; }
-        private decimal EfficiencyPercentage => (decimal)this.Efficiency / 100;
-        private decimal EfficiencyMult() => (decimal)this.Efficiency / (100 * Machine.Precision);
+        public decimal EfficiencyPercentage => (decimal)this.Efficiency / 100;
+        private decimal EfficiencyMult() => (decimal)this.Efficiency / (100 * Utils.Precision);
 
-        public Machine(IEnumerable<int> inputCapacities, IEnumerable<int> outputCapacities)
+        public Machine(int numInputs, int numOutputs, string defaultResourceId)
         {
-            this.Inputs = inputCapacities.Select(c => new Input((uint)c * Machine.Precision, this)).ToList();
-            this.Outputs = outputCapacities.Select(c => new Output((uint)c * Machine.Precision, this)).ToList();
+            for (int i = 0; i < numInputs; i++)
+            {
+                this.Inputs.Add(new Input(this, defaultResourceId));
+            }
+            for (int i = 0; i < numOutputs; i++)
+            {
+                this.Outputs.Add(new Output(this, defaultResourceId));
+            }
         }
 
         public void ConnectTo(int fromSlot, Machine toMachine, int toSlot)
@@ -34,10 +42,33 @@ namespace FactoryPlanner.scripts.MachineNetwork
         public bool HasInputSlots() => this.Inputs.Any();
         public bool HasConnectedInputs() => this.HasInputSlots() && this.Inputs.Any(i => i.Neighbor != null);
         public bool HasDisconnectedInputs() => this.HasInputSlots() && this.Inputs.Any(i => i.Neighbor == null);
+        public bool TryGetInputSlot(int idx, out Throughput input)
+        {
+            if (idx < this.Inputs.Count)
+            {
+                input = this.Inputs[idx];
+                return true;
+            }
+
+            input = null;
+            return false;
+        }
 
         public bool HasOutputSlots() => this.Outputs.Any();
         public bool HasConnectedOutputs() => this.HasOutputSlots() && this.Outputs.Any(i => i.Neighbor != null);
         public bool HasDisconnectedOutputs() => this.HasOutputSlots() && this.Outputs.Any(i => i.Neighbor == null);
+
+        public bool TryGetOutputSlot(int idx, out Throughput output)
+        {
+            if (idx < this.Outputs.Count)
+            {
+                output = this.Outputs[idx];
+                return true;
+            }
+
+            output = null;
+            return false;
+        }
 
         public IEnumerable<Machine> InputMachines() => this.Inputs
             .Select(i => i.Neighbor?.Parent)
@@ -56,7 +87,7 @@ namespace FactoryPlanner.scripts.MachineNetwork
             uint newEfficiency;
             if (!this.HasInputSlots())
             {
-                newEfficiency = 100 * Machine.Precision;
+                newEfficiency = 100 * Utils.Precision;
             }
             else if (this.HasDisconnectedInputs())
             {
@@ -67,12 +98,10 @@ namespace FactoryPlanner.scripts.MachineNetwork
                 newEfficiency = this.Inputs.Select(i => i.Efficiency()).Min();
             }
 
-            if (newEfficiency == this.Efficiency) return;
-
             this.Efficiency = newEfficiency;
             foreach (Output output in this.Outputs)
             {
-                output.SetFlow(this.Efficiency);
+                output.SetFlow(this.EfficiencyMult());
             }
             this.Backfill();
         }
@@ -82,13 +111,23 @@ namespace FactoryPlanner.scripts.MachineNetwork
             this.Efficiency = this.Outputs.Select(o => o.Efficiency()).Min();
             foreach (Input input in this.Inputs)
             {
-                input.SetFlow(this.Efficiency);
+                input.SetFlow(this.EfficiencyMult());
             }
 
             foreach (Machine inputMachine in this.InputMachines())
             {
                 inputMachine.Backfill();
             }
+        }
+
+        public void SetInput(int idx, string resourceId, uint capacity)
+        {
+            this.Inputs[idx].SetRecipe(capacity, resourceId);
+        }
+
+        public void SetOutput(int idx, string resourceId, uint capacity)
+        {
+            this.Outputs[idx].SetRecipe(capacity, resourceId);
         }
 
         public override string ToString()

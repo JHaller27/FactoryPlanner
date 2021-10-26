@@ -31,11 +31,6 @@ namespace FactoryPlanner.scripts.MachineNetwork
             this.Recalculate();
         }
 
-        public void ConnectMachines(int fromId, int fromSlot, int toId, int toSlot)
-        {
-            this.ConnectMachines(this.RandomAccessList[fromId], fromSlot, this.RandomAccessList[toId], toSlot);
-        }
-
         public void DisconnectMachines(Machine from, int fromSlot, Machine to, int toSlot)
         {
             from.DisconnectFrom(fromSlot, to, toSlot);
@@ -50,11 +45,6 @@ namespace FactoryPlanner.scripts.MachineNetwork
             }
 
             this.Recalculate();
-        }
-
-        public void DisconnectMachines(int fromId, int fromSlot, int toId, int toSlot)
-        {
-            this.DisconnectMachines(this.RandomAccessList[fromId], fromSlot, this.RandomAccessList[toId], toSlot);
         }
 
         public void Recalculate()

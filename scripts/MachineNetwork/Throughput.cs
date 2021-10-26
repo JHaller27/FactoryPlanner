@@ -2,18 +2,17 @@ namespace FactoryPlanner.scripts.MachineNetwork
 {
     public abstract class Throughput
     {
-        public uint Capacity { get; }
-        public uint Flow { get; set; }
-        public uint Efficiency() => this.Flow * 100 * Machine.Precision / this.Capacity;
+        public uint Flow { get; private set; }
+        public uint Capacity { get; private set; }
+        public uint Efficiency() => this.Flow * 100 * Utils.Precision / this.Capacity;
+        public string ResourceId { get; private set; }
         public Throughput Neighbor { get; private set; }
         public Machine Parent { get; }
 
-        protected Throughput(uint capacity, Machine parent)
+        protected Throughput(Machine parent, string resourceId)
         {
-            this.Capacity = capacity;
             this.Parent = parent;
-
-            this.Flow = this.Capacity;
+            this.ResourceId = resourceId;
         }
 
         public void SetNeighbor(Throughput neighbor)
@@ -21,9 +20,9 @@ namespace FactoryPlanner.scripts.MachineNetwork
             this.Neighbor = neighbor;
         }
 
-        public void SetFlow(uint efficiency)
+        public void SetFlow(decimal efficiencyMult)
         {
-            this.Flow = this.Capacity * efficiency / 100 * Machine.Precision;
+            this.Flow = (uint)(this.Capacity * efficiencyMult);
 
             if (this.Neighbor == null) return;
             if (this.Neighbor.Capacity >= this.Flow)
@@ -36,22 +35,28 @@ namespace FactoryPlanner.scripts.MachineNetwork
             this.Neighbor.Flow = this.Flow;
         }
 
+        public void SetRecipe(uint capacity, string resourceId)
+        {
+            this.Capacity = capacity;
+            this.ResourceId = resourceId;
+        }
+
         public override string ToString()
         {
-            return $"({this.Flow / Machine.Precision}/{this.Capacity / Machine.Precision})";
+            return $"({this.Flow / Utils.Precision}/{this.Capacity / Utils.Precision})";
         }
     }
 
     public class Input : Throughput
     {
-        public Input(uint capacity, Machine parent) : base(capacity, parent)
+        public Input(Machine parent, string resourceId) : base(parent, resourceId)
         {
         }
     }
 
     public class Output : Throughput
     {
-        public Output(uint capacity, Machine parent) : base(capacity, parent)
+        public Output(Machine parent, string resourceId) : base(parent, resourceId)
         {
         }
 
