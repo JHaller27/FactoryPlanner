@@ -1,10 +1,10 @@
-namespace FactoryPlanner.scripts.MachineNetwork
+namespace MachineNetwork
 {
     public abstract class Throughput
     {
         public uint Flow { get; private set; }
         public uint Capacity { get; private set; }
-        public uint Efficiency() => this.Flow * 100 * Utils.Precision / this.Capacity;
+        public uint Efficiency() => this.Flow * 100 * MachineNetwork.Precision / this.Capacity;
         public string ResourceId { get; private set; }
         public Throughput Neighbor { get; private set; }
         public Machine Parent { get; }
@@ -43,7 +43,7 @@ namespace FactoryPlanner.scripts.MachineNetwork
 
         public override string ToString()
         {
-            return $"({this.Flow / Utils.Precision}/{this.Capacity / Utils.Precision})";
+            return $"({this.Flow / MachineNetwork.Precision}/{this.Capacity / MachineNetwork.Precision})";
         }
     }
 

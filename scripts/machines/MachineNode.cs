@@ -1,6 +1,6 @@
 using System;
 using System.Collections.Generic;
-using FactoryPlanner.scripts.MachineNetwork;
+using MachineNetwork;
 using Godot;
 
 namespace FactoryPlanner.scripts.machines

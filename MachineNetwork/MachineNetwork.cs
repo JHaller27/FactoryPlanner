@@ -1,11 +1,12 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace FactoryPlanner.scripts.MachineNetwork
+namespace MachineNetwork
 {
     public class MachineNetwork
     {
-        private IDictionary<int, Machine> RandomAccessList { get; } = new Dictionary<int, Machine>();
+        public static uint Precision { get; set;  }
+        internal IDictionary<int, Machine> RandomAccessList { get; } = new Dictionary<int, Machine>();
         private ISet<Machine> Roots { get; } = new HashSet<Machine>();
         private ISet<Machine> Leaves { get; } = new HashSet<Machine>();
 
@@ -31,6 +32,11 @@ namespace FactoryPlanner.scripts.MachineNetwork
             this.Recalculate();
         }
 
+        internal void ConnectMachines(int fromId, int fromSlot, int toId, int toSlot)
+        {
+            this.ConnectMachines(this.RandomAccessList[fromId], fromSlot, this.RandomAccessList[toId], toSlot);
+        }
+
         public void DisconnectMachines(Machine from, int fromSlot, Machine to, int toSlot)
         {
             from.DisconnectFrom(fromSlot, to, toSlot);
@@ -45,6 +51,11 @@ namespace FactoryPlanner.scripts.MachineNetwork
             }
 
             this.Recalculate();
+        }
+
+        internal void DisconnectMachines(int fromId, int fromSlot, int toId, int toSlot)
+        {
+            this.DisconnectMachines(this.RandomAccessList[fromId], fromSlot, this.RandomAccessList[toId], toSlot);
         }
 
         public void Recalculate()

@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace FactoryPlanner.scripts.MachineNetwork
+namespace MachineNetwork
 {
     public class Machine
     {
@@ -13,7 +13,7 @@ namespace FactoryPlanner.scripts.MachineNetwork
 
         private uint Efficiency { get; set; }
         public decimal EfficiencyPercentage => (decimal)this.Efficiency / 100;
-        private decimal EfficiencyMult() => (decimal)this.Efficiency / (100 * Utils.Precision);
+        private decimal EfficiencyMult() => (decimal)this.Efficiency / (100 * MachineNetwork.Precision);
 
         public Machine(int numInputs, int numOutputs, string defaultResourceId)
         {
@@ -24,6 +24,21 @@ namespace FactoryPlanner.scripts.MachineNetwork
             for (int i = 0; i < numOutputs; i++)
             {
                 this.Outputs.Add(new Output(this, defaultResourceId));
+            }
+        }
+
+        public Machine(IEnumerable<int> inputCapacities, IEnumerable<int> outputCapacities)
+        {
+            foreach (int capacity in inputCapacities)
+            {
+                Input i = new Input(this, "???");
+                i.SetRecipe((uint)capacity, "???");
+            }
+            // this.Outputs = outputCapacities.Select(c => new Output((uint)c * Machine.Precision, this)).ToList();
+            foreach (int capacity in outputCapacities)
+            {
+                Output i = new Output(this, "???");
+                i.SetRecipe((uint)capacity, "???");
             }
         }
 
@@ -87,7 +102,7 @@ namespace FactoryPlanner.scripts.MachineNetwork
             uint newEfficiency;
             if (!this.HasInputSlots())
             {
-                newEfficiency = 100 * Utils.Precision;
+                newEfficiency = 100 * MachineNetwork.Precision;
             }
             else if (this.HasDisconnectedInputs())
             {
@@ -108,7 +123,7 @@ namespace FactoryPlanner.scripts.MachineNetwork
 
         private void Backfill()
         {
-            this.Efficiency = this.Outputs.Select(o => o.Efficiency()).Min();
+            this.Efficiency = this.Outputs.Any() ? this.Outputs.Select(o => o.Efficiency()).Min() : 100 * MachineNetwork.Precision;
             foreach (Input input in this.Inputs)
             {
                 input.SetFlow(this.EfficiencyMult());

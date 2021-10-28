@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using FactoryPlanner.DataReader;
-using FactoryPlanner.scripts.MachineNetwork;
 using Godot;
 using FactoryPlanner.scripts.machines;
 using Godot.Collections;
@@ -8,7 +7,7 @@ using Resource = FactoryPlanner.scripts.machines.Resource;
 
 public class GraphEdit : Godot.GraphEdit
 {
-    private MachineNetwork Network { get; } = new MachineNetwork();
+    private MachineNetwork.MachineNetwork Network { get; } = new MachineNetwork.MachineNetwork();
     private static readonly IDictionary<uint, string> KeyMachinePathMap = new Godot.Collections.Dictionary<uint, string>
     {
         [(int)KeyList.Key1] = "res://Miner.tscn",
@@ -19,6 +18,8 @@ public class GraphEdit : Godot.GraphEdit
     // Called when the node enters the scene tree for the first time.
     public override void _Ready()
     {
+        MachineNetwork.MachineNetwork.Precision = 100;
+
         // One-time load resources
         Reader.LoadData("res://data/Resources.json");
 
