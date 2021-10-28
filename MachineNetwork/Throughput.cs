@@ -4,7 +4,7 @@ namespace MachineNetwork
     {
         public uint Flow { get; private set; }
         public uint Capacity { get; private set; }
-        public uint Efficiency() => this.Flow * 100 * MachineNetwork.Precision / this.Capacity;
+        public uint Efficiency() => this.Capacity == 0 ? 100 * MachineNetwork.Precision : this.Flow * 100 * MachineNetwork.Precision / this.Capacity;
         public string ResourceId { get; private set; }
         public Throughput Neighbor { get; private set; }
         public Machine Parent { get; }
