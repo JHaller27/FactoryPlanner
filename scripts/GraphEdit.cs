@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using FactoryPlanner.DataReader;
 using Godot;
@@ -65,8 +66,21 @@ public class GraphEdit : Godot.GraphEdit
             this.ConnectNode(fromName, fromSlot, toName, toSlot);
             this.Network.ConnectMachines(fromNode.MachineModel, fromSlot, toNode.MachineModel, toSlot);
 
-            fromNode.UpdateSlots();
-            toNode.UpdateSlots();
+            this.UpdateAllMachines();
+        }
+    }
+
+    private void UpdateAllMachines()
+    {
+        Console.WriteLine("====================");
+        Console.WriteLine(this.Network);
+
+        foreach (object obj in this.GetChildren())
+        {
+            if (obj is MachineNode machineNode)
+            {
+                machineNode.UpdateSlots();
+            }
         }
     }
 
@@ -104,7 +118,6 @@ public class GraphEdit : Godot.GraphEdit
         this.DisconnectNode(fromName, fromSlot, toName, toSlot);
         this.Network.DisconnectMachines(fromNode.MachineModel, fromSlot, toNode.MachineModel, toSlot);
 
-        fromNode.UpdateSlots();
-        toNode.UpdateSlots();
+        this.UpdateAllMachines();
     }
 }
