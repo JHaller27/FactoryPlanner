@@ -27,21 +27,6 @@ namespace MachineNetwork
             }
         }
 
-        public Machine(IEnumerable<int> inputCapacities, IEnumerable<int> outputCapacities)
-        {
-            foreach (int capacity in inputCapacities)
-            {
-                Input i = new Input(this, "???");
-                i.SetRecipe((uint)capacity, "???");
-            }
-            // this.Outputs = outputCapacities.Select(c => new Output((uint)c * Machine.Precision, this)).ToList();
-            foreach (int capacity in outputCapacities)
-            {
-                Output i = new Output(this, "???");
-                i.SetRecipe((uint)capacity, "???");
-            }
-        }
-
         public void ConnectTo(int fromSlot, Machine toMachine, int toSlot)
         {
             this.Outputs[fromSlot].SetNeighbor(toMachine.Inputs[toSlot]);

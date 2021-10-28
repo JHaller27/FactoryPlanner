@@ -6,7 +6,7 @@ namespace MachineNetwork
     public class MachineNetwork
     {
         public static uint Precision { get; set;  }
-        internal IDictionary<int, Machine> RandomAccessList { get; } = new Dictionary<int, Machine>();
+        private IDictionary<int, Machine> RandomAccessList { get; } = new Dictionary<int, Machine>();
         private ISet<Machine> Roots { get; } = new HashSet<Machine>();
         private ISet<Machine> Leaves { get; } = new HashSet<Machine>();
 
@@ -22,6 +22,11 @@ namespace MachineNetwork
             return key;
         }
 
+        private Machine GetMachine(int idx)
+        {
+            return this.RandomAccessList[idx];
+        }
+
         public void ConnectMachines(Machine from, int fromSlot, Machine to, int toSlot)
         {
             from.ConnectTo(fromSlot, to, toSlot);
@@ -32,9 +37,9 @@ namespace MachineNetwork
             this.Recalculate();
         }
 
-        internal void ConnectMachines(int fromId, int fromSlot, int toId, int toSlot)
+        public void ConnectMachines(int fromId, int fromSlot, int toId, int toSlot)
         {
-            this.ConnectMachines(this.RandomAccessList[fromId], fromSlot, this.RandomAccessList[toId], toSlot);
+            this.ConnectMachines(this.GetMachine(fromId), fromSlot, this.GetMachine(toId), toSlot);
         }
 
         public void DisconnectMachines(Machine from, int fromSlot, Machine to, int toSlot)
@@ -53,9 +58,9 @@ namespace MachineNetwork
             this.Recalculate();
         }
 
-        internal void DisconnectMachines(int fromId, int fromSlot, int toId, int toSlot)
+        public void DisconnectMachines(int fromId, int fromSlot, int toId, int toSlot)
         {
-            this.DisconnectMachines(this.RandomAccessList[fromId], fromSlot, this.RandomAccessList[toId], toSlot);
+            this.DisconnectMachines(this.GetMachine(fromId), fromSlot, this.GetMachine(toId), toSlot);
         }
 
         public void Recalculate()
