@@ -88,7 +88,7 @@ namespace FactoryPlanner.scripts.machines
                     inputResource = Resource.GetResource(input.ResourceId);
 
                     this.ResourceNameLabel(this.InputContainer, slotId).Text = inputResource.Name;
-                    this.RateLabel(this.InputContainer, slotId).Text = this.RateString(input);
+                    this.RateLabel(this.InputContainer, slotId).Text = input.RateString();
                 }
 
                 if (hasOutput)
@@ -96,7 +96,7 @@ namespace FactoryPlanner.scripts.machines
                     outputResource = Resource.GetResource(output.ResourceId);
 
                     this.ResourceNameLabel(this.OutputContainer, slotId).Text = outputResource.Name;
-                    this.RateLabel(this.OutputContainer, slotId).Text = this.RateString(output);
+                    this.RateLabel(this.OutputContainer, slotId).Text = output.RateString();
                 }
 
                 // Update slots
@@ -106,11 +106,6 @@ namespace FactoryPlanner.scripts.machines
             }
 
             this.EfficiencySlider.Value = (int)this.MachineModel.EfficiencyPercentage;
-        }
-
-        private string RateString(Throughput throughput)
-        {
-            return $"{throughput.Flow / Network.Precision:0.##} / {throughput.Capacity / Network.Precision:0.##}";
         }
 
         protected static void AddEnumItems(OptionButton optionButton, Type enumType, int defaultIdx = 0)

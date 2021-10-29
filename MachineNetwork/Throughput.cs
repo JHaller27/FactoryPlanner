@@ -1,9 +1,11 @@
+using Network = MachineNetwork.MachineNetwork;
+
 namespace MachineNetwork
 {
     public abstract class Throughput
     {
-        public uint Flow { get; private set; }
-        public uint Capacity { get; private set; }
+        private uint Flow { get; set; }
+        private uint Capacity { get; set; }
         public uint Efficiency() => this.Capacity == 0 ? 100 * MachineNetwork.Precision : this.Flow * 100 * MachineNetwork.Precision / this.Capacity;
         public string ResourceId { get; private set; }
         public Throughput Neighbor { get; private set; }
@@ -39,6 +41,11 @@ namespace MachineNetwork
         {
             this.Capacity = capacity;
             this.ResourceId = resourceId;
+        }
+
+        public string RateString()
+        {
+            return $"{this.Flow / Network.Precision:0.##} / {this.Capacity / Network.Precision:0.##}";
         }
 
         public override string ToString()
