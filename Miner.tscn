@@ -59,12 +59,12 @@ margin_right = 166.0
 margin_bottom = 58.0
 size_flags_horizontal = 3
 
-[node name="OptionButton" type="OptionButton" parent="HBoxContainer/VBoxContainer/HBoxContainer"]
+[node name="MkOptionButton" type="OptionButton" parent="HBoxContainer/VBoxContainer/HBoxContainer"]
 margin_right = 81.0
 margin_bottom = 20.0
 size_flags_horizontal = 3
 
-[node name="OptionButton2" type="OptionButton" parent="HBoxContainer/VBoxContainer/HBoxContainer"]
+[node name="PurityOptionButton2" type="OptionButton" parent="HBoxContainer/VBoxContainer/HBoxContainer"]
 margin_left = 85.0
 margin_right = 166.0
 margin_bottom = 20.0
