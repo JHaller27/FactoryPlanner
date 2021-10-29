@@ -5,10 +5,17 @@ namespace MachineNetwork
 {
     public class MachineNetwork
     {
+        private static MachineNetwork _instance = null;
+        public static MachineNetwork Instance => _instance ?? (_instance = new MachineNetwork());
+
         public static uint Precision { get; set;  }
         private IDictionary<int, Machine> RandomAccessList { get; } = new Dictionary<int, Machine>();
         private ISet<Machine> Roots { get; } = new HashSet<Machine>();
         private ISet<Machine> Leaves { get; } = new HashSet<Machine>();
+
+        private MachineNetwork()
+        {
+        }
 
         public int AddMachine(Machine machine)
         {
