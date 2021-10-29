@@ -5,10 +5,10 @@ namespace MachineNetwork
 {
     public class Machine
     {
-        private IList<Input> Inputs { get; } = new List<Input>();
+        private IList<IThroughput> Inputs { get; } = new List<IThroughput>();
         public int CountInputs => this.Inputs.Count;
 
-        private IList<Output> Outputs { get; } = new List<Output>();
+        private IList<IThroughput> Outputs { get; } = new List<IThroughput>();
         public int CountOutputs => this.Outputs.Count;
 
         private uint Efficiency { get; set; }
@@ -99,7 +99,7 @@ namespace MachineNetwork
             }
 
             this.Efficiency = newEfficiency;
-            foreach (Output output in this.Outputs)
+            foreach (IThroughput output in this.Outputs)
             {
                 output.SetEfficiency(this.EfficiencyMult());
             }
@@ -109,7 +109,7 @@ namespace MachineNetwork
         private void Backfill()
         {
             this.Efficiency = this.Outputs.Any() ? this.Outputs.Select(o => o.Efficiency()).Min() : 100 * MachineNetwork.Precision;
-            foreach (Input input in this.Inputs)
+            foreach (IThroughput input in this.Inputs)
             {
                 input.SetEfficiency(this.EfficiencyMult());
             }
