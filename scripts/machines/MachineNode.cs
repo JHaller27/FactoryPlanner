@@ -1,6 +1,7 @@
 using System;
 using MachineNetwork;
 using Godot;
+using Network = MachineNetwork.MachineNetwork;
 
 namespace FactoryPlanner.scripts.machines
 {
@@ -65,6 +66,7 @@ namespace FactoryPlanner.scripts.machines
                 this.MachineModel.SetOutput(idx, resourceId, capacity);
             }
 
+            Network.Instance.Recalculate();
             this.UpdateSlots();
         }
 
