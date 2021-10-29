@@ -92,4 +92,41 @@ namespace MachineNetwork
             return s;
         }
     }
+
+    // TODO Implement this to be used for mergers/splitters
+    public class PassthroughThroughput : IThroughput
+    {
+        public string ResourceId { get; }
+        public IThroughput Neighbor { get; }
+        public Machine Parent { get; }
+        public void SetNeighbor(IThroughput neighbor)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void SetEfficiency(decimal efficiencyMult)
+        {
+            throw new NotImplementedException();
+        }
+
+        public uint SetFlow(uint flow)
+        {
+            throw new NotImplementedException();
+        }
+
+        public uint Efficiency()
+        {
+            throw new NotImplementedException();
+        }
+
+        public void SetRecipe(uint capacity, string resourceId)
+        {
+            throw new NotImplementedException();
+        }
+
+        public string RateString()
+        {
+            throw new NotImplementedException();
+        }
+    }
 }
