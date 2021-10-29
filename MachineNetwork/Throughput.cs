@@ -1,40 +1,54 @@
+using System;
 using Network = MachineNetwork.MachineNetwork;
 
 namespace MachineNetwork
 {
-    public abstract class Throughput
+    public interface IThroughput
+    {
+        string ResourceId { get; }
+        IThroughput Neighbor { get; }
+        Machine Parent { get; }
+
+        void SetNeighbor(IThroughput neighbor);
+        void SetEfficiency(decimal efficiencyMult);
+        uint SetFlow(uint flow);
+        uint Efficiency();
+        void SetRecipe(uint capacity, string resourceId);
+        string RateString();
+    }
+
+    public abstract class ThroughputBase : IThroughput
     {
         private uint Flow { get; set; }
         private uint Capacity { get; set; }
         public uint Efficiency() => this.Capacity == 0 ? 100 * MachineNetwork.Precision : this.Flow * 100 * MachineNetwork.Precision / this.Capacity;
         public string ResourceId { get; private set; }
-        public Throughput Neighbor { get; private set; }
+        public IThroughput Neighbor { get; private set; }
         public Machine Parent { get; }
 
-        protected Throughput(Machine parent, string resourceId)
+        protected ThroughputBase(Machine parent, string resourceId)
         {
             this.Parent = parent;
             this.ResourceId = resourceId;
         }
 
-        public void SetNeighbor(Throughput neighbor)
+        public void SetNeighbor(IThroughput neighbor)
         {
             this.Neighbor = neighbor;
         }
 
-        public void SetFlow(decimal efficiencyMult)
+        public void SetEfficiency(decimal efficiencyMult)
         {
             this.Flow = (uint)(this.Capacity * efficiencyMult);
 
             if (this.Neighbor == null) return;
-            if (this.Neighbor.Capacity >= this.Flow)
-            {
-                this.Neighbor.Flow = this.Flow;
-                return;
-            }
+            this.Flow = this.Neighbor.SetFlow(this.Flow);
+        }
 
-            this.Flow = this.Neighbor.Capacity;
-            this.Neighbor.Flow = this.Flow;
+        public uint SetFlow(uint flow)
+        {
+            this.Flow = Math.Min(this.Capacity, flow);
+            return this.Flow;
         }
 
         public void SetRecipe(uint capacity, string resourceId)
@@ -54,14 +68,14 @@ namespace MachineNetwork
         }
     }
 
-    public class Input : Throughput
+    public class Input : ThroughputBase
     {
         public Input(Machine parent, string resourceId) : base(parent, resourceId)
         {
         }
     }
 
-    public class Output : Throughput
+    public class Output : ThroughputBase
     {
         public Output(Machine parent, string resourceId) : base(parent, resourceId)
         {

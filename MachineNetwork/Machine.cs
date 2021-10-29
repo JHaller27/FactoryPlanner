@@ -42,7 +42,7 @@ namespace MachineNetwork
         public bool HasInputSlots() => this.Inputs.Any();
         public bool HasConnectedInputs() => this.HasInputSlots() && this.Inputs.Any(i => i.Neighbor != null);
         public bool HasDisconnectedInputs() => this.HasInputSlots() && this.Inputs.Any(i => i.Neighbor == null);
-        public bool TryGetInputSlot(int idx, out Throughput input)
+        public bool TryGetInputSlot(int idx, out IThroughput input)
         {
             if (idx < this.Inputs.Count)
             {
@@ -58,7 +58,7 @@ namespace MachineNetwork
         public bool HasConnectedOutputs() => this.HasOutputSlots() && this.Outputs.Any(i => i.Neighbor != null);
         public bool HasDisconnectedOutputs() => this.HasOutputSlots() && this.Outputs.Any(i => i.Neighbor == null);
 
-        public bool TryGetOutputSlot(int idx, out Throughput output)
+        public bool TryGetOutputSlot(int idx, out IThroughput output)
         {
             if (idx < this.Outputs.Count)
             {
@@ -101,7 +101,7 @@ namespace MachineNetwork
             this.Efficiency = newEfficiency;
             foreach (Output output in this.Outputs)
             {
-                output.SetFlow(this.EfficiencyMult());
+                output.SetEfficiency(this.EfficiencyMult());
             }
             this.Backfill();
         }
@@ -111,7 +111,7 @@ namespace MachineNetwork
             this.Efficiency = this.Outputs.Any() ? this.Outputs.Select(o => o.Efficiency()).Min() : 100 * MachineNetwork.Precision;
             foreach (Input input in this.Inputs)
             {
-                input.SetFlow(this.EfficiencyMult());
+                input.SetEfficiency(this.EfficiencyMult());
             }
 
             foreach (Machine inputMachine in this.InputMachines())

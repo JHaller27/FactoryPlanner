@@ -77,9 +77,9 @@ namespace FactoryPlanner.scripts.machines
 
             for (int slotId = 0; slotId < Math.Max(numInputs, numOutputs); slotId++)
             {
-                bool hasInput = this.MachineModel.TryGetInputSlot(slotId, out Throughput input);
+                bool hasInput = this.MachineModel.TryGetInputSlot(slotId, out IThroughput input);
                 Resource inputResource = Resource.Any;
-                bool hasOutput = this.MachineModel.TryGetOutputSlot(slotId, out Throughput output);
+                bool hasOutput = this.MachineModel.TryGetOutputSlot(slotId, out IThroughput output);
                 Resource outputResource = Resource.Any;
 
                 // Update labels
