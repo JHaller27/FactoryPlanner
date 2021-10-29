@@ -25,6 +25,34 @@ namespace FactoryPlanner.scripts.machines
             }
         }
 
+        private Recipe Copy()
+        {
+            return new Recipe
+            {
+                Id = this.Id,
+                Name = this.Name,
+                Tags = this.Tags.ToHashSet(),
+                Inputs = this.Inputs.Select(t => new Tuple<Resource, uint>(t.Item1, t.Item2)).ToList(),
+                Outputs = this.Outputs.Select(t => new Tuple<Resource, uint>(t.Item1, t.Item2)).ToList(),
+            };
+        }
+
+        public Recipe ModifyInputCapacity(int idx, Func<uint, uint> modFunc)
+        {
+            Recipe cpy = this.Copy();
+            cpy.Inputs[idx] = new Tuple<Resource, uint>(cpy.Inputs[idx].Item1, modFunc(cpy.Inputs[idx].Item2));
+
+            return cpy;
+        }
+
+        public Recipe ModifyOutputCapacity(int idx, Func<uint, uint> modFunc)
+        {
+            Recipe cpy = this.Copy();
+            cpy.Outputs[idx] = new Tuple<Resource, uint>(cpy.Outputs[idx].Item1, modFunc(cpy.Outputs[idx].Item2));
+
+            return cpy;
+        }
+
         public void AddInputResource(Resource resource, uint capacity)
         {
             this.Inputs.Add(new Tuple<Resource, uint>(resource, capacity));

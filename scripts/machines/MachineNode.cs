@@ -113,13 +113,15 @@ namespace FactoryPlanner.scripts.machines
             return $"{throughput.Flow / Utils.Precision:0.##} / {throughput.Capacity / Utils.Precision:0.##}";
         }
 
-        protected static void AddEnumItems(OptionButton optionButton, Type enumType)
+        protected static void AddEnumItems(OptionButton optionButton, Type enumType, int defaultIdx = 0)
         {
             foreach (object val in Enum.GetValues(enumType))
             {
                 optionButton.AddItem(val.ToString());
                 optionButton.SetItemMetadata(optionButton.GetItemCount()-1, val);
             }
+
+            optionButton.Selected = defaultIdx;
         }
 
         protected static void AddOption<T>(OptionButton optionButton, string name, T metaData)

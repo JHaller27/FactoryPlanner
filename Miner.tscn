@@ -83,4 +83,6 @@ rect_pivot_offset = Vector2( -352.221, -33.5466 )
 alignment = 1
 
 [connection signal="close_request" from="." to="." method="_on_GraphNode_close_request"]
+[connection signal="item_selected" from="HBoxContainer/VBoxContainer/HBoxContainer/MkOptionButton" to="." method="_on_MkOptionButton_item_selected"]
+[connection signal="item_selected" from="HBoxContainer/VBoxContainer/HBoxContainer/PurityOptionButton2" to="." method="_on_PurityOptionButton2_item_selected"]
 [connection signal="item_selected" from="HBoxContainer/VBoxContainer/OptionButton" to="." method="_on_Resource_Selected"]
