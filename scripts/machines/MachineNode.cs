@@ -110,7 +110,7 @@ namespace FactoryPlanner.scripts.machines
 
         private string RateString(Throughput throughput)
         {
-            return $"{throughput.Flow / Utils.Precision:0.##} / {throughput.Capacity / Utils.Precision:0.##}";
+            return $"{throughput.Flow / Network.Precision:0.##} / {throughput.Capacity / Network.Precision:0.##}";
         }
 
         protected static void AddEnumItems(OptionButton optionButton, Type enumType, int defaultIdx = 0)
