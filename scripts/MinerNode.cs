@@ -49,9 +49,7 @@ public class MinerNode : MachineNode
 
     private void _on_Resource_Selected(int index)
     {
-        string recipeId = (string)this.ResourceOptionButton.GetItemMetadata(index);
-        Recipe recipe = Recipe.GetRecipe(recipeId);
-
-        this.UpdateRecipe(recipe);
+        this.RecipeId = (string)this.ResourceOptionButton.GetItemMetadata(index);
+        this.UpdateRecipe();
     }
 }

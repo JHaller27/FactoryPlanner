@@ -24,9 +24,7 @@ public class ConstructorNode : MachineNode
 
     private void _on_Resource_Selected(int index)
     {
-        string recipeId = (string)this.RecipeOptionButton.GetItemMetadata(index);
-        Recipe recipe = Recipe.GetRecipe(recipeId);
-
-        this.UpdateRecipe(recipe);
+        this.RecipeId = (string)this.RecipeOptionButton.GetItemMetadata(index);
+        this.UpdateRecipe();
     }
 }

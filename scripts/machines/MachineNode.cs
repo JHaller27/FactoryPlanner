@@ -14,6 +14,8 @@ namespace FactoryPlanner.scripts.machines
         private Label ResourceNameLabel(VBoxContainer container, int slotId) => container.GetChild<VBoxContainer>(slotId).GetChild<Label>(0);
         private Label RateLabel(VBoxContainer container, int slotId) => container.GetChild<VBoxContainer>(slotId).GetChild<Label>(1);
 
+        protected string RecipeId { get; set; }
+
         public Machine MachineModel { get; }
 
         internal MachineNode(int numInputs, int numOutputs)
@@ -45,8 +47,15 @@ namespace FactoryPlanner.scripts.machines
             this.UpdateSlots();
         }
 
-        protected void UpdateRecipe(Recipe recipe)
+        protected virtual Recipe ChooseRecipe()
         {
+            return Recipe.GetRecipe(this.RecipeId);
+        }
+
+        protected void UpdateRecipe()
+        {
+            Recipe recipe = this.ChooseRecipe();
+
             foreach ((int idx, string resourceId, uint capacity) in recipe.ListInputs())
             {
                 this.MachineModel.SetInput(idx, resourceId, capacity);
