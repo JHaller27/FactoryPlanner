@@ -9,15 +9,15 @@ namespace MachineNetwork
         public static MachineNetwork Instance => _instance ?? (_instance = new MachineNetwork());
 
         public static uint Precision { get; set;  }
-        private IDictionary<int, Machine> RandomAccessList { get; } = new Dictionary<int, Machine>();
-        private ISet<Machine> Roots { get; } = new HashSet<Machine>();
-        private ISet<Machine> Leaves { get; } = new HashSet<Machine>();
+        private IDictionary<int, IMachine> RandomAccessList { get; } = new Dictionary<int, IMachine>();
+        private ISet<IMachine> Roots { get; } = new HashSet<IMachine>();
+        private ISet<IMachine> Leaves { get; } = new HashSet<IMachine>();
 
         private MachineNetwork()
         {
         }
 
-        public int AddMachine(Machine machine)
+        public int AddMachine(IMachine machine)
         {
             int key = this.RandomAccessList.Count;
             this.RandomAccessList.Add(key, machine);
@@ -29,12 +29,12 @@ namespace MachineNetwork
             return key;
         }
 
-        private Machine GetMachine(int idx)
+        private IMachine GetMachine(int idx)
         {
             return this.RandomAccessList[idx];
         }
 
-        public void ConnectMachines(Machine from, int fromSlot, Machine to, int toSlot)
+        public void ConnectMachines(IMachine from, int fromSlot, IMachine to, int toSlot)
         {
             from.ConnectTo(fromSlot, to, toSlot);
 
@@ -49,7 +49,7 @@ namespace MachineNetwork
             this.ConnectMachines(this.GetMachine(fromId), fromSlot, this.GetMachine(toId), toSlot);
         }
 
-        public void DisconnectMachines(Machine from, int fromSlot, Machine to, int toSlot)
+        public void DisconnectMachines(IMachine from, int fromSlot, IMachine to, int toSlot)
         {
             from.DisconnectFrom(fromSlot, to, toSlot);
 
@@ -72,7 +72,7 @@ namespace MachineNetwork
 
         public void Recalculate()
         {
-            foreach (Machine leaf in this.Leaves)
+            foreach (IMachine leaf in this.Leaves)
             {
                 leaf.Update();
             }

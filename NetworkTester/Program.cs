@@ -34,7 +34,7 @@ namespace NetworkTester
             Console.WriteLine(Network.Instance);
         }
 
-        static void UpdateRecipe(Machine machine, Dictionary<int, uint> inputCapacities, Dictionary<int, uint> outputCapacities)
+        static void UpdateRecipe(IMachine machine, Dictionary<int, uint> inputCapacities, Dictionary<int, uint> outputCapacities)
         {
             if (inputCapacities != null)
             {

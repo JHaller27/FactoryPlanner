@@ -7,9 +7,9 @@ namespace MachineNetwork
     {
         string ResourceId { get; }
         IThroughput Neighbor { get; }
-        Machine Parent { get; }
+        IMachine Parent { get; }
 
-        void SetNeighbor(IEfficientThroughput neighbor);
+        void SetNeighbor(IThroughput neighbor);
         uint SetFlow(uint flow);
         uint Efficiency();
         void SetRecipe(uint capacity, string resourceId);
@@ -28,15 +28,15 @@ namespace MachineNetwork
         public uint Efficiency() => this.Capacity == 0 ? 100 * MachineNetwork.Precision : this.Flow * 100 * MachineNetwork.Precision / this.Capacity;
         public string ResourceId { get; private set; }
         public IThroughput Neighbor { get; private set; }
-        public Machine Parent { get; }
+        public IMachine Parent { get; }
 
-        protected EfficientThroughputBase(Machine parent, string resourceId)
+        protected EfficientThroughputBase(IMachine parent, string resourceId)
         {
             this.Parent = parent;
             this.ResourceId = resourceId;
         }
 
-        public void SetNeighbor(IEfficientThroughput neighbor)
+        public void SetNeighbor(IThroughput neighbor)
         {
             this.Neighbor = neighbor;
         }
@@ -74,14 +74,14 @@ namespace MachineNetwork
 
     public class Input : EfficientThroughputBase
     {
-        public Input(Machine parent, string resourceId) : base(parent, resourceId)
+        public Input(IMachine parent, string resourceId) : base(parent, resourceId)
         {
         }
     }
 
     public class Output : EfficientThroughputBase
     {
-        public Output(Machine parent, string resourceId) : base(parent, resourceId)
+        public Output(IMachine parent, string resourceId) : base(parent, resourceId)
         {
         }
 
@@ -101,16 +101,16 @@ namespace MachineNetwork
     {
         public string ResourceId { get; private set; }
         public IThroughput Neighbor { get; private set; }
-        public Machine Parent { get; }
+        public IMachine Parent { get; }
         private uint FlowRate { get; set; }
 
-        public PassthroughThroughput(Machine parent, string resourceId)
+        public PassthroughThroughput(IMachine parent, string resourceId)
         {
             this.Parent = parent;
             this.ResourceId = resourceId;
         }
 
-        public void SetNeighbor(IEfficientThroughput neighbor)
+        public void SetNeighbor(IThroughput neighbor)
         {
             this.Neighbor = neighbor;
         }

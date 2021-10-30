@@ -17,7 +17,7 @@ namespace FactoryPlanner.scripts.machines
 
         protected string RecipeId { get; set; }
 
-        public Machine MachineModel { get; }
+        public IMachine MachineModel { get; }
 
         internal MachineNode(int numInputs, int numOutputs)
         {
@@ -77,9 +77,9 @@ namespace FactoryPlanner.scripts.machines
 
             for (int slotId = 0; slotId < Math.Max(numInputs, numOutputs); slotId++)
             {
-                bool hasInput = this.MachineModel.TryGetInputSlot(slotId, out IEfficientThroughput input);
+                bool hasInput = this.MachineModel.TryGetInputSlot(slotId, out IThroughput input);
                 Resource inputResource = Resource.Any;
-                bool hasOutput = this.MachineModel.TryGetOutputSlot(slotId, out IEfficientThroughput output);
+                bool hasOutput = this.MachineModel.TryGetOutputSlot(slotId, out IThroughput output);
                 Resource outputResource = Resource.Any;
 
                 // Update labels

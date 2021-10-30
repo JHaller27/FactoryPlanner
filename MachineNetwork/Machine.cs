@@ -3,12 +3,48 @@ using System.Linq;
 
 namespace MachineNetwork
 {
-    public class Machine
+    public interface IMachine
     {
-        private IList<IEfficientThroughput> Inputs { get; } = new List<IEfficientThroughput>();
+        IList<IThroughput> Inputs { get; }
+        int CountInputs { get; }
+
+        IList<IThroughput> Outputs { get; }
+        int CountOutputs { get; }
+
+        decimal EfficiencyPercentage { get; }
+
+        void ConnectTo(int fromSlot, IMachine toMachine, int toSlot);
+
+        void DisconnectFrom(int fromSlot, IMachine toMachine, int toSlot);
+
+        bool HasInputSlots();
+        bool HasConnectedInputs();
+        bool HasDisconnectedInputs();
+        bool TryGetInputSlot(int idx, out IThroughput input);
+
+        bool HasOutputSlots();
+        bool HasConnectedOutputs();
+        bool HasDisconnectedOutputs();
+
+        bool TryGetOutputSlot(int idx, out IThroughput output);
+
+        IEnumerable<IMachine> InputMachines();
+        IEnumerable<IMachine> OutputMachines();
+
+        void Update();
+        void Backfill();
+
+        void SetInput(int idx, string resourceId, uint capacity);
+
+        void SetOutput(int idx, string resourceId, uint capacity);
+    }
+
+    public class Machine : IMachine
+    {
+        public IList<IThroughput> Inputs { get; } = new List<IThroughput>();
         public int CountInputs => this.Inputs.Count;
 
-        private IList<IEfficientThroughput> Outputs { get; } = new List<IEfficientThroughput>();
+        public IList<IThroughput> Outputs { get; } = new List<IThroughput>();
         public int CountOutputs => this.Outputs.Count;
 
         private uint Efficiency { get; set; }
@@ -27,13 +63,13 @@ namespace MachineNetwork
             }
         }
 
-        public void ConnectTo(int fromSlot, Machine toMachine, int toSlot)
+        public void ConnectTo(int fromSlot, IMachine toMachine, int toSlot)
         {
             this.Outputs[fromSlot].SetNeighbor(toMachine.Inputs[toSlot]);
             toMachine.Inputs[toSlot].SetNeighbor(this.Outputs[fromSlot]);
         }
 
-        public void DisconnectFrom(int fromSlot, Machine toMachine, int toSlot)
+        public void DisconnectFrom(int fromSlot, IMachine toMachine, int toSlot)
         {
             this.Outputs[fromSlot].SetNeighbor(null);
             toMachine.Inputs[toSlot].SetNeighbor(null);
@@ -42,7 +78,7 @@ namespace MachineNetwork
         public bool HasInputSlots() => this.Inputs.Any();
         public bool HasConnectedInputs() => this.HasInputSlots() && this.Inputs.Any(i => i.Neighbor != null);
         public bool HasDisconnectedInputs() => this.HasInputSlots() && this.Inputs.Any(i => i.Neighbor == null);
-        public bool TryGetInputSlot(int idx, out IEfficientThroughput input)
+        public bool TryGetInputSlot(int idx, out IThroughput input)
         {
             if (idx < this.Inputs.Count)
             {
@@ -58,7 +94,7 @@ namespace MachineNetwork
         public bool HasConnectedOutputs() => this.HasOutputSlots() && this.Outputs.Any(i => i.Neighbor != null);
         public bool HasDisconnectedOutputs() => this.HasOutputSlots() && this.Outputs.Any(i => i.Neighbor == null);
 
-        public bool TryGetOutputSlot(int idx, out IEfficientThroughput output)
+        public bool TryGetOutputSlot(int idx, out IThroughput output)
         {
             if (idx < this.Outputs.Count)
             {
@@ -70,17 +106,17 @@ namespace MachineNetwork
             return false;
         }
 
-        public IEnumerable<Machine> InputMachines() => this.Inputs
+        public IEnumerable<IMachine> InputMachines() => this.Inputs
             .Select(i => i.Neighbor?.Parent)
             .Where(n => n != null);
-        public IEnumerable<Machine> OutputMachines() => this.Outputs
+        public IEnumerable<IMachine> OutputMachines() => this.Outputs
             .Select(i => i.Neighbor?.Parent)
             .Where(n => n != null);
 
         public void Update()
         {
             // Update my input machines (recursively)
-            foreach (Machine input in this.InputMachines())
+            foreach (IMachine input in this.InputMachines())
             {
                 input.Update();
             }
@@ -112,7 +148,7 @@ namespace MachineNetwork
             this.Backfill();
         }
 
-        private void Backfill()
+        public void Backfill()
         {
             // Determine my new efficiency based on my outputs
             this.Efficiency = this.Outputs.Any() ? this.Outputs.Select(o => o.Efficiency()).Min() : 100 * MachineNetwork.Precision;
@@ -124,7 +160,7 @@ namespace MachineNetwork
             }
 
             // Update my input machines (recursively)
-            foreach (Machine inputMachine in this.InputMachines())
+            foreach (IMachine inputMachine in this.InputMachines())
             {
                 inputMachine.Backfill();
             }
