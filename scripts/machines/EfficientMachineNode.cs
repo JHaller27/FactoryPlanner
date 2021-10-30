@@ -5,12 +5,12 @@ using Network = MachineNetwork.MachineNetwork;
 
 namespace FactoryPlanner.scripts.machines
 {
-    public class MachineNode : GraphNode
+    public class EfficientMachineNode : GraphNode
     {
         private VBoxContainer InputContainer => this.GetChild<HBoxContainer>(0).GetChild<VBoxContainer>(0);
         protected VBoxContainer ControlsContainer => this.GetChild<HBoxContainer>(0).GetChild<VBoxContainer>(1);
         private VBoxContainer OutputContainer => this.GetChild<HBoxContainer>(0).GetChild<VBoxContainer>(2);
-        public HSlider EfficiencySlider => this.ControlsContainer.GetChild<HSlider>(1);
+        private HSlider EfficiencySlider => this.ControlsContainer.GetChild<HSlider>(1);
 
         private Label ResourceNameLabel(VBoxContainer container, int slotId) => container.GetChild<VBoxContainer>(slotId).GetChild<Label>(0);
         private Label RateLabel(VBoxContainer container, int slotId) => container.GetChild<VBoxContainer>(slotId).GetChild<Label>(1);
@@ -19,7 +19,7 @@ namespace FactoryPlanner.scripts.machines
 
         public EfficientMachine MachineModel { get; }
 
-        internal MachineNode(int numInputs, int numOutputs)
+        internal EfficientMachineNode(int numInputs, int numOutputs)
         {
             this.MachineModel = new EfficientMachine(numInputs, numOutputs, Resource.Any.Id);
         }

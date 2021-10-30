@@ -2,7 +2,7 @@ using System.ComponentModel;
 using FactoryPlanner.scripts.machines;
 using Godot;
 
-public class MinerNode : MachineNode
+public class MinerNode : EfficientMachineNode
 {
     private OptionButton MkOptionButton => this.ControlsContainer.GetChild<HBoxContainer>(2).GetChild<OptionButton>(0);
     private OptionButton PurityOptionButton => this.ControlsContainer.GetChild<HBoxContainer>(2).GetChild<OptionButton>(1);

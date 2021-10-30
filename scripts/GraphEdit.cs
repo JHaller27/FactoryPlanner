@@ -46,7 +46,7 @@ public class GraphEdit : Godot.GraphEdit
             if (KeyMachinePathMap.TryGetValue(eventKey.Scancode, out string path))
             {
                 PackedScene graphScene = ResourceLoader.Load<PackedScene>(path);
-                MachineNode graphNode = (MachineNode)graphScene.Instance();
+                EfficientMachineNode graphNode = (EfficientMachineNode)graphScene.Instance();
 
                 this.AddChild(graphNode);
                 Network.Instance.AddMachine(graphNode.MachineModel);
@@ -60,8 +60,8 @@ public class GraphEdit : Godot.GraphEdit
 
     private void _on_GraphEdit_connection_request(string fromName, int fromSlot, string toName, int toSlot)
     {
-        MachineNode fromNode = this.GetNode<MachineNode>(fromName);
-        MachineNode toNode = this.GetNode<MachineNode>(toName);
+        EfficientMachineNode fromNode = this.GetNode<EfficientMachineNode>(fromName);
+        EfficientMachineNode toNode = this.GetNode<EfficientMachineNode>(toName);
 
         if (this.IsValidConnectionType(fromNode.GetSlotTypeRight(fromSlot), toNode.GetSlotTypeLeft(toSlot)) &&
             !this.HasInput(toName, toSlot) && !this.HasOutput(fromName, fromSlot))
@@ -80,7 +80,7 @@ public class GraphEdit : Godot.GraphEdit
 
         foreach (object obj in this.GetChildren())
         {
-            if (obj is MachineNode machineNode)
+            if (obj is EfficientMachineNode machineNode)
             {
                 machineNode.UpdateSlots();
             }
@@ -115,8 +115,8 @@ public class GraphEdit : Godot.GraphEdit
 
     private void _on_GraphEdit_disconnection_request(string fromName, int fromSlot, string toName, int toSlot)
     {
-        MachineNode fromNode = this.GetNode<MachineNode>(fromName);
-        MachineNode toNode = this.GetNode<MachineNode>(toName);
+        EfficientMachineNode fromNode = this.GetNode<EfficientMachineNode>(fromName);
+        EfficientMachineNode toNode = this.GetNode<EfficientMachineNode>(toName);
 
         this.DisconnectNode(fromName, fromSlot, toName, toSlot);
         Network.Instance.DisconnectMachines(fromNode.MachineModel, fromSlot, toNode.MachineModel, toSlot);

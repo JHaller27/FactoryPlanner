@@ -24,7 +24,7 @@ namespace NetworkTester
             UpdateRecipe(m2b, new() { [0] = 3000 }, new() { [0] = 3000 });
             Network.Instance.AddMachine(m2b);
 
-            Balancer splitter2 = new(1, 3, "Any");
+            Balancer splitter2 = new(3, 3, "Any");
             Network.Instance.AddMachine(splitter2);
 
             EfficientMachine m3a = new(1, 1, "Any");
@@ -35,7 +35,7 @@ namespace NetworkTester
             UpdateRecipe(m3b, new() { [0] = 3000 }, new() { [0] = 2000 });
             Network.Instance.AddMachine(m3b);
 
-            Balancer merger = new(3, 1, "Any");
+            Balancer merger = new(3, 3, "Any");
             Network.Instance.AddMachine(merger);
 
             Console.WriteLine(Network.Instance);

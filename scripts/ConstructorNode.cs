@@ -1,7 +1,7 @@
 using Godot;
 using FactoryPlanner.scripts.machines;
 
-public class ConstructorNode : MachineNode
+public class ConstructorNode : EfficientMachineNode
 {
     private OptionButton RecipeOptionButton => this.ControlsContainer.GetChild<OptionButton>(2);
 
