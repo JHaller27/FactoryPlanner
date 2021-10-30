@@ -8,7 +8,6 @@ namespace MachineNetwork
         IThroughput GetInput(int idx);
         int CountInputs();
 
-        IThroughput GetOutput(int idx);
         int CountOutputs();
 
         decimal EfficiencyPercentage { get; }
@@ -17,19 +16,12 @@ namespace MachineNetwork
 
         void DisconnectFrom(int fromSlot, IMachine toMachine, int toSlot);
 
-        bool HasInputSlots();
         bool HasConnectedInputs();
-        bool HasDisconnectedInputs();
         bool TryGetInputSlot(int idx, out IThroughput input);
 
-        bool HasOutputSlots();
         bool HasConnectedOutputs();
-        bool HasDisconnectedOutputs();
 
         bool TryGetOutputSlot(int idx, out IThroughput output);
-
-        IEnumerable<IMachine> InputMachines();
-        IEnumerable<IMachine> OutputMachines();
 
         void Update();
         void Backfill();
@@ -68,7 +60,7 @@ namespace MachineNetwork
             return this.Inputs[idx];
         }
 
-        public IThroughput GetOutput(int idx)
+        private IThroughput GetOutput(int idx)
         {
             return this.Outputs[idx];
         }
@@ -85,9 +77,9 @@ namespace MachineNetwork
             toMachine.GetInput(toSlot).SetNeighbor(null);
         }
 
-        public bool HasInputSlots() => this.Inputs.Any();
+        private bool HasInputSlots() => this.Inputs.Any();
         public bool HasConnectedInputs() => this.HasInputSlots() && this.Inputs.Any(i => i.Neighbor != null);
-        public bool HasDisconnectedInputs() => this.HasInputSlots() && this.Inputs.Any(i => i.Neighbor == null);
+        private bool HasDisconnectedInputs() => this.HasInputSlots() && this.Inputs.Any(i => i.Neighbor == null);
         public bool TryGetInputSlot(int idx, out IThroughput input)
         {
             if (idx < this.CountInputs())
@@ -100,9 +92,8 @@ namespace MachineNetwork
             return false;
         }
 
-        public bool HasOutputSlots() => this.Outputs.Any();
+        private bool HasOutputSlots() => this.Outputs.Any();
         public bool HasConnectedOutputs() => this.HasOutputSlots() && this.Outputs.Any(i => i.Neighbor != null);
-        public bool HasDisconnectedOutputs() => this.HasOutputSlots() && this.Outputs.Any(i => i.Neighbor == null);
 
         public bool TryGetOutputSlot(int idx, out IThroughput output)
         {
@@ -116,10 +107,7 @@ namespace MachineNetwork
             return false;
         }
 
-        public IEnumerable<IMachine> InputMachines() => this.Inputs
-            .Select(i => i.Neighbor?.Parent)
-            .Where(n => n != null);
-        public IEnumerable<IMachine> OutputMachines() => this.Outputs
+        private IEnumerable<IMachine> InputMachines() => this.Inputs
             .Select(i => i.Neighbor?.Parent)
             .Where(n => n != null);
 
