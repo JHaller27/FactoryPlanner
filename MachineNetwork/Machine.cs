@@ -5,10 +5,10 @@ namespace MachineNetwork
 {
     public class Machine
     {
-        private IList<IThroughput> Inputs { get; } = new List<IThroughput>();
+        private IList<IEfficientThroughput> Inputs { get; } = new List<IEfficientThroughput>();
         public int CountInputs => this.Inputs.Count;
 
-        private IList<IThroughput> Outputs { get; } = new List<IThroughput>();
+        private IList<IEfficientThroughput> Outputs { get; } = new List<IEfficientThroughput>();
         public int CountOutputs => this.Outputs.Count;
 
         private uint Efficiency { get; set; }
@@ -42,7 +42,7 @@ namespace MachineNetwork
         public bool HasInputSlots() => this.Inputs.Any();
         public bool HasConnectedInputs() => this.HasInputSlots() && this.Inputs.Any(i => i.Neighbor != null);
         public bool HasDisconnectedInputs() => this.HasInputSlots() && this.Inputs.Any(i => i.Neighbor == null);
-        public bool TryGetInputSlot(int idx, out IThroughput input)
+        public bool TryGetInputSlot(int idx, out IEfficientThroughput input)
         {
             if (idx < this.Inputs.Count)
             {
@@ -58,7 +58,7 @@ namespace MachineNetwork
         public bool HasConnectedOutputs() => this.HasOutputSlots() && this.Outputs.Any(i => i.Neighbor != null);
         public bool HasDisconnectedOutputs() => this.HasOutputSlots() && this.Outputs.Any(i => i.Neighbor == null);
 
-        public bool TryGetOutputSlot(int idx, out IThroughput output)
+        public bool TryGetOutputSlot(int idx, out IEfficientThroughput output)
         {
             if (idx < this.Outputs.Count)
             {
@@ -103,7 +103,7 @@ namespace MachineNetwork
             this.Efficiency = newEfficiency;
 
             // Update my outputs' flows with my new efficiency
-            foreach (IThroughput output in this.Outputs)
+            foreach (IEfficientThroughput output in this.Outputs)
             {
                 output.SetEfficiency(this.EfficiencyMult());
             }
@@ -118,7 +118,7 @@ namespace MachineNetwork
             this.Efficiency = this.Outputs.Any() ? this.Outputs.Select(o => o.Efficiency()).Min() : 100 * MachineNetwork.Precision;
 
             // Update my inputs' flows with my new efficiency
-            foreach (IThroughput input in this.Inputs)
+            foreach (IEfficientThroughput input in this.Inputs)
             {
                 input.SetEfficiency(this.EfficiencyMult());
             }

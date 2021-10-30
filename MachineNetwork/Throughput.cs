@@ -9,15 +9,19 @@ namespace MachineNetwork
         IThroughput Neighbor { get; }
         Machine Parent { get; }
 
-        void SetNeighbor(IThroughput neighbor);
-        void SetEfficiency(decimal efficiencyMult);
+        void SetNeighbor(IEfficientThroughput neighbor);
         uint SetFlow(uint flow);
         uint Efficiency();
         void SetRecipe(uint capacity, string resourceId);
         string RateString();
     }
 
-    public abstract class ThroughputBase : IThroughput
+    public interface IEfficientThroughput : IThroughput
+    {
+        void SetEfficiency(decimal efficiencyMult);
+    }
+
+    public abstract class EfficientThroughputBase : IEfficientThroughput
     {
         private uint Flow { get; set; }
         private uint Capacity { get; set; }
@@ -26,13 +30,13 @@ namespace MachineNetwork
         public IThroughput Neighbor { get; private set; }
         public Machine Parent { get; }
 
-        protected ThroughputBase(Machine parent, string resourceId)
+        protected EfficientThroughputBase(Machine parent, string resourceId)
         {
             this.Parent = parent;
             this.ResourceId = resourceId;
         }
 
-        public void SetNeighbor(IThroughput neighbor)
+        public void SetNeighbor(IEfficientThroughput neighbor)
         {
             this.Neighbor = neighbor;
         }
@@ -68,14 +72,14 @@ namespace MachineNetwork
         }
     }
 
-    public class Input : ThroughputBase
+    public class Input : EfficientThroughputBase
     {
         public Input(Machine parent, string resourceId) : base(parent, resourceId)
         {
         }
     }
 
-    public class Output : ThroughputBase
+    public class Output : EfficientThroughputBase
     {
         public Output(Machine parent, string resourceId) : base(parent, resourceId)
         {
@@ -106,15 +110,9 @@ namespace MachineNetwork
             this.ResourceId = resourceId;
         }
 
-        public void SetNeighbor(IThroughput neighbor)
+        public void SetNeighbor(IEfficientThroughput neighbor)
         {
             this.Neighbor = neighbor;
-        }
-
-        public void SetEfficiency(decimal efficiencyMult)
-        {
-            // Setting Efficiency doesn't make sense for a passthrough
-            // TODO Remove from interface. This will require a new Machine interface for Passthrough Machines that don't need to SetEfficiency
         }
 
         public uint SetFlow(uint flow)
