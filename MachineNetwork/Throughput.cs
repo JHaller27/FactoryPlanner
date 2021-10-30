@@ -93,40 +93,49 @@ namespace MachineNetwork
         }
     }
 
-    // TODO Implement this to be used for mergers/splitters
     public class PassthroughThroughput : IThroughput
     {
-        public string ResourceId { get; }
-        public IThroughput Neighbor { get; }
+        public string ResourceId { get; private set; }
+        public IThroughput Neighbor { get; private set; }
         public Machine Parent { get; }
+        private uint FlowRate { get; set; }
+
+        public PassthroughThroughput(Machine parent, string resourceId)
+        {
+            this.Parent = parent;
+            this.ResourceId = resourceId;
+        }
+
         public void SetNeighbor(IThroughput neighbor)
         {
-            throw new NotImplementedException();
+            this.Neighbor = neighbor;
         }
 
         public void SetEfficiency(decimal efficiencyMult)
         {
-            throw new NotImplementedException();
+            // Setting Efficiency doesn't make sense for a passthrough
+            // TODO Remove from interface. This will require a new Machine interface for Passthrough Machines that don't need to SetEfficiency
         }
 
         public uint SetFlow(uint flow)
         {
-            throw new NotImplementedException();
+            return this.FlowRate = flow;
         }
 
         public uint Efficiency()
         {
-            throw new NotImplementedException();
+            return 100 * Network.Precision;
         }
 
         public void SetRecipe(uint capacity, string resourceId)
         {
-            throw new NotImplementedException();
+            this.FlowRate = capacity;
+            this.ResourceId = resourceId;
         }
 
         public string RateString()
         {
-            throw new NotImplementedException();
+            return $"{this.FlowRate / Network.Precision:0.##}";
         }
     }
 }
