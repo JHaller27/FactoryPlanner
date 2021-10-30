@@ -6,31 +6,30 @@ namespace MachineNetwork
     public interface IMachine
     {
         int CountInputs();
-
         int CountOutputs();
 
-        decimal EfficiencyPercentage { get; }
-
         void ConnectTo(int fromSlot, IMachine toMachine, int toSlot);
-
         void DisconnectFrom(int fromSlot, IMachine toMachine, int toSlot);
 
         bool HasConnectedInputs();
         bool TryGetInputSlot(int idx, out IThroughput input);
 
         bool HasConnectedOutputs();
-
         bool TryGetOutputSlot(int idx, out IThroughput output);
 
         void Update();
         void Backfill();
 
         void SetInput(int idx, string resourceId, uint capacity);
-
         void SetOutput(int idx, string resourceId, uint capacity);
     }
 
-    public class Machine : IMachine
+    public interface IEfficientMachine : IMachine
+    {
+        decimal EfficiencyPercentage { get; }
+    }
+
+    public class Machine : IEfficientMachine
     {
         private IList<IEfficientThroughput> Inputs { get; } = new List<IEfficientThroughput>();
         public int CountInputs() => this.Inputs.Count;

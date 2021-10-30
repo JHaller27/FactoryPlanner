@@ -17,7 +17,7 @@ namespace FactoryPlanner.scripts.machines
 
         protected string RecipeId { get; set; }
 
-        public IMachine MachineModel { get; }
+        public IEfficientMachine MachineModel { get; }
 
         internal MachineNode(int numInputs, int numOutputs)
         {
