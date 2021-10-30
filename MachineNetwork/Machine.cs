@@ -5,7 +5,6 @@ namespace MachineNetwork
 {
     public interface IMachine
     {
-        IThroughput GetInput(int idx);
         int CountInputs();
 
         int CountOutputs();
@@ -55,26 +54,22 @@ namespace MachineNetwork
             }
         }
 
-        public IThroughput GetInput(int idx)
-        {
-            return this.Inputs[idx];
-        }
-
-        private IThroughput GetOutput(int idx)
-        {
-            return this.Outputs[idx];
-        }
-
         public void ConnectTo(int fromSlot, IMachine toMachine, int toSlot)
         {
-            this.GetOutput(fromSlot).SetNeighbor(toMachine.GetInput(toSlot));
-            toMachine.GetInput(toSlot).SetNeighbor(this.GetOutput(fromSlot));
+            this.TryGetOutputSlot(fromSlot, out IThroughput fromOutput);
+            toMachine.TryGetInputSlot(toSlot, out IThroughput toInput);
+
+            fromOutput.SetNeighbor(toInput);
+            toInput.SetNeighbor(fromOutput);
         }
 
         public void DisconnectFrom(int fromSlot, IMachine toMachine, int toSlot)
         {
-            this.GetOutput(fromSlot).SetNeighbor(null);
-            toMachine.GetInput(toSlot).SetNeighbor(null);
+            this.TryGetOutputSlot(fromSlot, out IThroughput output);
+            toMachine.TryGetInputSlot(toSlot, out IThroughput input);
+
+            output.SetNeighbor(null);
+            input.SetNeighbor(null);
         }
 
         private bool HasInputSlots() => this.Inputs.Any();
@@ -84,7 +79,7 @@ namespace MachineNetwork
         {
             if (idx < this.CountInputs())
             {
-                input = this.GetInput(idx);
+                input = this.Inputs[idx];
                 return true;
             }
 
@@ -99,7 +94,7 @@ namespace MachineNetwork
         {
             if (idx < this.CountOutputs())
             {
-                output = this.GetOutput(idx);
+                output = this.Outputs[idx];
                 return true;
             }
 
