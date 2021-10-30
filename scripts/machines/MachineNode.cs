@@ -27,7 +27,7 @@ namespace FactoryPlanner.scripts.machines
         public override void _Ready()
         {
             // Add labels
-            for (int i = 0; i < this.MachineModel.CountInputs; i++)
+            for (int i = 0; i < this.MachineModel.CountInputs(); i++)
             {
                 VBoxContainer slotLabelContainer = new VBoxContainer();
                 slotLabelContainer.AddChild(new Label());
@@ -36,7 +36,7 @@ namespace FactoryPlanner.scripts.machines
                 this.InputContainer.AddChild(slotLabelContainer);
             }
 
-            for (int i = 0; i < this.MachineModel.CountOutputs; i++)
+            for (int i = 0; i < this.MachineModel.CountOutputs(); i++)
             {
                 VBoxContainer slotLabelContainer = new VBoxContainer();
                 slotLabelContainer.AddChild(new Label());
@@ -72,8 +72,8 @@ namespace FactoryPlanner.scripts.machines
 
         public void UpdateSlots()
         {
-            int numInputs = this.MachineModel.CountInputs;
-            int numOutputs = this.MachineModel.CountOutputs;
+            int numInputs = this.MachineModel.CountInputs();
+            int numOutputs = this.MachineModel.CountOutputs();
 
             for (int slotId = 0; slotId < Math.Max(numInputs, numOutputs); slotId++)
             {

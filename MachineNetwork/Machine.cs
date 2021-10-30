@@ -5,11 +5,11 @@ namespace MachineNetwork
 {
     public interface IMachine
     {
-        IList<IThroughput> Inputs { get; }
-        int CountInputs { get; }
+        IThroughput GetInput(int idx);
+        int CountInputs();
 
-        IList<IThroughput> Outputs { get; }
-        int CountOutputs { get; }
+        IThroughput GetOutput(int idx);
+        int CountOutputs();
 
         decimal EfficiencyPercentage { get; }
 
@@ -41,11 +41,11 @@ namespace MachineNetwork
 
     public class Machine : IMachine
     {
-        public IList<IThroughput> Inputs { get; } = new List<IThroughput>();
-        public int CountInputs => this.Inputs.Count;
+        private IList<IEfficientThroughput> Inputs { get; } = new List<IEfficientThroughput>();
+        public int CountInputs() => this.Inputs.Count;
 
-        public IList<IThroughput> Outputs { get; } = new List<IThroughput>();
-        public int CountOutputs => this.Outputs.Count;
+        private IList<IEfficientThroughput> Outputs { get; } = new List<IEfficientThroughput>();
+        public int CountOutputs() => this.Outputs.Count;
 
         private uint Efficiency { get; set; }
         public decimal EfficiencyPercentage => (decimal)this.Efficiency / 100;
@@ -63,16 +63,26 @@ namespace MachineNetwork
             }
         }
 
+        public IThroughput GetInput(int idx)
+        {
+            return this.Inputs[idx];
+        }
+
+        public IThroughput GetOutput(int idx)
+        {
+            return this.Outputs[idx];
+        }
+
         public void ConnectTo(int fromSlot, IMachine toMachine, int toSlot)
         {
-            this.Outputs[fromSlot].SetNeighbor(toMachine.Inputs[toSlot]);
-            toMachine.Inputs[toSlot].SetNeighbor(this.Outputs[fromSlot]);
+            this.GetOutput(fromSlot).SetNeighbor(toMachine.GetInput(toSlot));
+            toMachine.GetInput(toSlot).SetNeighbor(this.GetOutput(fromSlot));
         }
 
         public void DisconnectFrom(int fromSlot, IMachine toMachine, int toSlot)
         {
-            this.Outputs[fromSlot].SetNeighbor(null);
-            toMachine.Inputs[toSlot].SetNeighbor(null);
+            this.GetOutput(fromSlot).SetNeighbor(null);
+            toMachine.GetInput(toSlot).SetNeighbor(null);
         }
 
         public bool HasInputSlots() => this.Inputs.Any();
@@ -80,9 +90,9 @@ namespace MachineNetwork
         public bool HasDisconnectedInputs() => this.HasInputSlots() && this.Inputs.Any(i => i.Neighbor == null);
         public bool TryGetInputSlot(int idx, out IThroughput input)
         {
-            if (idx < this.Inputs.Count)
+            if (idx < this.CountInputs())
             {
-                input = this.Inputs[idx];
+                input = this.GetInput(idx);
                 return true;
             }
 
@@ -96,9 +106,9 @@ namespace MachineNetwork
 
         public bool TryGetOutputSlot(int idx, out IThroughput output)
         {
-            if (idx < this.Outputs.Count)
+            if (idx < this.CountOutputs())
             {
-                output = this.Outputs[idx];
+                output = this.GetOutput(idx);
                 return true;
             }
 
