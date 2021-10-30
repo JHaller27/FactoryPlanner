@@ -7,18 +7,19 @@ namespace MachineNetwork
     {
         string ResourceId { get; }
         IThroughput Neighbor { get; }
-        IMachine Parent { get; }
+        MachineBase Parent { get; }
 
         void SetNeighbor(IThroughput neighbor);
+        bool HasNeighbor();
         uint SetFlow(uint flow);
-        uint Efficiency();
-        void SetRecipe(uint capacity, string resourceId);
         string RateString();
     }
 
     public interface IEfficientThroughput : IThroughput
     {
         void SetEfficiency(decimal efficiencyMult);
+        uint Efficiency();
+        void SetRecipe(uint capacity, string resourceId);
     }
 
     public abstract class EfficientThroughputBase : IEfficientThroughput
@@ -28,9 +29,9 @@ namespace MachineNetwork
         public uint Efficiency() => this.Capacity == 0 ? 100 * MachineNetwork.Precision : this.Flow * 100 * MachineNetwork.Precision / this.Capacity;
         public string ResourceId { get; private set; }
         public IThroughput Neighbor { get; private set; }
-        public IMachine Parent { get; }
+        public MachineBase Parent { get; }
 
-        protected EfficientThroughputBase(IMachine parent, string resourceId)
+        protected EfficientThroughputBase(MachineBase parent, string resourceId)
         {
             this.Parent = parent;
             this.ResourceId = resourceId;
@@ -40,6 +41,8 @@ namespace MachineNetwork
         {
             this.Neighbor = neighbor;
         }
+
+        public bool HasNeighbor() => this.Neighbor != null;
 
         public void SetEfficiency(decimal efficiencyMult)
         {
@@ -74,14 +77,14 @@ namespace MachineNetwork
 
     public class Input : EfficientThroughputBase
     {
-        public Input(IMachine parent, string resourceId) : base(parent, resourceId)
+        public Input(MachineBase parent, string resourceId) : base(parent, resourceId)
         {
         }
     }
 
     public class Output : EfficientThroughputBase
     {
-        public Output(IMachine parent, string resourceId) : base(parent, resourceId)
+        public Output(MachineBase parent, string resourceId) : base(parent, resourceId)
         {
         }
 
@@ -101,10 +104,10 @@ namespace MachineNetwork
     {
         public string ResourceId { get; private set; }
         public IThroughput Neighbor { get; private set; }
-        public IMachine Parent { get; }
-        private uint FlowRate { get; set; }
+        public MachineBase Parent { get; }
+        public uint FlowRate { get; set; }
 
-        public PassthroughThroughput(IMachine parent, string resourceId)
+        public PassthroughThroughput(MachineBase parent, string resourceId)
         {
             this.Parent = parent;
             this.ResourceId = resourceId;
@@ -115,25 +118,28 @@ namespace MachineNetwork
             this.Neighbor = neighbor;
         }
 
+        public bool HasNeighbor() => this.Neighbor != null;
+
         public uint SetFlow(uint flow)
         {
             return this.FlowRate = flow;
         }
 
-        public uint Efficiency()
-        {
-            return 100 * Network.Precision;
-        }
-
-        public void SetRecipe(uint capacity, string resourceId)
-        {
-            this.FlowRate = capacity;
-            this.ResourceId = resourceId;
-        }
-
         public string RateString()
         {
             return $"{this.FlowRate / Network.Precision:0.##}";
+        }
+
+        public string RateString(bool showNeighbor)
+        {
+            string s = this.RateString();
+
+            if (showNeighbor && this.Neighbor != null)
+            {
+                s += " -> " + this.Neighbor.Parent;
+            }
+
+            return s;
         }
     }
 }

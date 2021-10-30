@@ -3,45 +3,52 @@ using System.Linq;
 
 namespace MachineNetwork
 {
-    public interface IMachine
+    public abstract class MachineBase
     {
-        int CountInputs();
-        int CountOutputs();
+        public abstract int CountInputs();
+        public abstract int CountOutputs();
 
-        void ConnectTo(int fromSlot, IMachine toMachine, int toSlot);
-        void DisconnectFrom(int fromSlot, IMachine toMachine, int toSlot);
+        public void ConnectTo(int fromSlot, MachineBase toMachine, int toSlot)
+        {
+            this.TryGetOutputSlot(fromSlot, out IThroughput fromOutput);
+            toMachine.TryGetInputSlot(toSlot, out IThroughput toInput);
 
-        bool HasConnectedInputs();
-        bool TryGetInputSlot(int idx, out IThroughput input);
+            fromOutput.SetNeighbor(toInput);
+            toInput.SetNeighbor(fromOutput);
+        }
 
-        bool HasConnectedOutputs();
-        bool TryGetOutputSlot(int idx, out IThroughput output);
+        public void DisconnectFrom(int fromSlot, MachineBase toMachine, int toSlot)
+        {
+            this.TryGetOutputSlot(fromSlot, out IThroughput output);
+            toMachine.TryGetInputSlot(toSlot, out IThroughput input);
 
-        void Update();
-        void Backfill();
+            output.SetNeighbor(null);
+            input.SetNeighbor(null);
+        }
 
-        void SetInput(int idx, string resourceId, uint capacity);
-        void SetOutput(int idx, string resourceId, uint capacity);
+        public abstract bool HasConnectedInputs();
+        public abstract bool TryGetInputSlot(int idx, out IThroughput input);
+
+        public abstract bool HasConnectedOutputs();
+        public abstract bool TryGetOutputSlot(int idx, out IThroughput output);
+
+        public abstract void Update();
+        public abstract void Backfill();
     }
 
-    public interface IEfficientMachine : IMachine
-    {
-        decimal GetEfficiencyPercentage();
-    }
-
-    public class Machine : IEfficientMachine
+    public class EfficientMachine : MachineBase
     {
         private IList<IEfficientThroughput> Inputs { get; } = new List<IEfficientThroughput>();
-        public int CountInputs() => this.Inputs.Count;
+        public override int CountInputs() => this.Inputs.Count;
 
         private IList<IEfficientThroughput> Outputs { get; } = new List<IEfficientThroughput>();
-        public int CountOutputs() => this.Outputs.Count;
+        public override int CountOutputs() => this.Outputs.Count;
 
         private uint Efficiency { get; set; }
         public decimal GetEfficiencyPercentage() => (decimal)this.Efficiency / 100;
         private decimal EfficiencyMult() => (decimal)this.Efficiency / (100 * MachineNetwork.Precision);
 
-        public Machine(int numInputs, int numOutputs, string defaultResourceId)
+        public EfficientMachine(int numInputs, int numOutputs, string defaultResourceId)
         {
             for (int i = 0; i < numInputs; i++)
             {
@@ -53,28 +60,10 @@ namespace MachineNetwork
             }
         }
 
-        public void ConnectTo(int fromSlot, IMachine toMachine, int toSlot)
-        {
-            this.TryGetOutputSlot(fromSlot, out IThroughput fromOutput);
-            toMachine.TryGetInputSlot(toSlot, out IThroughput toInput);
-
-            fromOutput.SetNeighbor(toInput);
-            toInput.SetNeighbor(fromOutput);
-        }
-
-        public void DisconnectFrom(int fromSlot, IMachine toMachine, int toSlot)
-        {
-            this.TryGetOutputSlot(fromSlot, out IThroughput output);
-            toMachine.TryGetInputSlot(toSlot, out IThroughput input);
-
-            output.SetNeighbor(null);
-            input.SetNeighbor(null);
-        }
-
         private bool HasInputSlots() => this.Inputs.Any();
-        public bool HasConnectedInputs() => this.HasInputSlots() && this.Inputs.Any(i => i.Neighbor != null);
+        public override bool HasConnectedInputs() => this.HasInputSlots() && this.Inputs.Any(i => i.Neighbor != null);
         private bool HasDisconnectedInputs() => this.HasInputSlots() && this.Inputs.Any(i => i.Neighbor == null);
-        public bool TryGetInputSlot(int idx, out IThroughput input)
+        public override bool TryGetInputSlot(int idx, out IThroughput input)
         {
             if (idx < this.CountInputs())
             {
@@ -87,9 +76,9 @@ namespace MachineNetwork
         }
 
         private bool HasOutputSlots() => this.Outputs.Any();
-        public bool HasConnectedOutputs() => this.HasOutputSlots() && this.Outputs.Any(i => i.Neighbor != null);
+        public override bool HasConnectedOutputs() => this.HasOutputSlots() && this.Outputs.Any(i => i.Neighbor != null);
 
-        public bool TryGetOutputSlot(int idx, out IThroughput output)
+        public override bool TryGetOutputSlot(int idx, out IThroughput output)
         {
             if (idx < this.CountOutputs())
             {
@@ -101,14 +90,14 @@ namespace MachineNetwork
             return false;
         }
 
-        private IEnumerable<IMachine> InputMachines() => this.Inputs
+        private IEnumerable<MachineBase> InputMachines() => this.Inputs
             .Select(i => i.Neighbor?.Parent)
             .Where(n => n != null);
 
-        public void Update()
+        public override void Update()
         {
             // Update my input machines (recursively)
-            foreach (IMachine input in this.InputMachines())
+            foreach (MachineBase input in this.InputMachines())
             {
                 input.Update();
             }
@@ -140,7 +129,7 @@ namespace MachineNetwork
             this.Backfill();
         }
 
-        public void Backfill()
+        public override void Backfill()
         {
             // Determine my new efficiency based on my outputs
             this.Efficiency = this.Outputs.Any() ? this.Outputs.Select(o => o.Efficiency()).Min() : 100 * MachineNetwork.Precision;
@@ -152,7 +141,7 @@ namespace MachineNetwork
             }
 
             // Update my input machines (recursively)
-            foreach (IMachine inputMachine in this.InputMachines())
+            foreach (MachineBase inputMachine in this.InputMachines())
             {
                 inputMachine.Backfill();
             }
@@ -171,6 +160,135 @@ namespace MachineNetwork
         public override string ToString()
         {
             return string.Join(", ", this.Inputs.Select(i => i.ToString())) + $":{this.GetEfficiencyPercentage():0.##}%:" + string.Join(", ", this.Outputs.Select(o => o.ToString()));
+        }
+    }
+
+        // private IList<IThroughput> Inputs { get; } = new List<IThroughput>();
+        // private IList<IThroughput> Outputs { get; } = new List<IThroughput>();
+
+    public class Balancer : MachineBase
+    {
+        private IList<PassthroughThroughput> Inputs { get; } = new List<PassthroughThroughput>();
+        private IList<PassthroughThroughput> Outputs { get; } = new List<PassthroughThroughput>();
+
+        public override int CountInputs() => this.Inputs.Count;
+        public override int CountOutputs() => this.Outputs.Count;
+
+        private int CountConnectedInputs() => this.Inputs.Count(i => i.HasNeighbor());
+        private int CountConnectedOutputs() => this.Outputs.Count(o => o.HasNeighbor());
+
+        public Balancer(int numInputs, int numOutputs, string defaultResourceId)
+        {
+            for (int i = 0; i < numInputs; i++)
+            {
+                this.Inputs.Add(new PassthroughThroughput(this, defaultResourceId));
+            }
+            for (int i = 0; i < numOutputs; i++)
+            {
+                this.Outputs.Add(new PassthroughThroughput(this, defaultResourceId));
+            }
+        }
+
+        private bool HasInputSlots() => this.Inputs.Any();
+        public override bool HasConnectedInputs() => this.HasInputSlots() && this.Inputs.Any(i => i.Neighbor != null);
+
+        public override bool TryGetInputSlot(int idx, out IThroughput input)
+        {
+            if (idx < this.CountInputs())
+            {
+                input = this.Inputs[idx];
+                return true;
+            }
+
+            input = null;
+            return false;
+        }
+
+        private bool HasOutputSlots() => this.Outputs.Any();
+        public override bool HasConnectedOutputs() => this.HasOutputSlots() && this.Outputs.Any(i => i.Neighbor != null);
+
+        public override bool TryGetOutputSlot(int idx, out IThroughput output)
+        {
+            if (idx < this.CountOutputs())
+            {
+                output = this.Outputs[idx];
+                return true;
+            }
+
+            output = null;
+            return false;
+        }
+
+        private IEnumerable<MachineBase> InputMachines() => this.Inputs
+            .Select(i => i.Neighbor?.Parent)
+            .Where(n => n != null);
+
+        public override void Update()
+        {
+            // Update my input machines (recursively)
+            foreach (MachineBase input in this.InputMachines())
+            {
+                input.Update();
+            }
+
+            // Get new output flow based on total input flow & number of connected neighbors
+            uint totalInputFlow = this.Inputs.Aggregate<PassthroughThroughput, uint>(0, (current, input) => current + input.FlowRate);
+            bool hasNoConnectedOutput = this.CountConnectedOutputs() == 0;
+            uint eachOutputFlow = hasNoConnectedOutput ? (uint)(totalInputFlow / this.CountOutputs()) : (uint)(totalInputFlow / this.CountConnectedOutputs());
+
+            // Update my outputs' flows
+            foreach (IThroughput output in this.Outputs)
+            {
+                if (hasNoConnectedOutput)
+                {
+                    output.SetFlow(eachOutputFlow);
+                }
+                else if (output.HasNeighbor())
+                {
+                    output.SetFlow(eachOutputFlow);
+                    output.Neighbor.SetFlow(eachOutputFlow);
+                }
+                else
+                {
+                    output.SetFlow(0);
+                }
+            }
+
+            // Update my efficiency again based on my outputs
+            this.Backfill();
+        }
+
+        public override void Backfill()
+        {
+            // Get new input flow based on total output flow & number of connected neighbors
+            uint totalOutputFlow = this.Outputs.Aggregate<PassthroughThroughput, uint>(0, (current, input) => current + input.FlowRate);
+            uint eachInputFlow = this.CountConnectedInputs() == 0 ? 0 : (uint)(totalOutputFlow / this.CountConnectedInputs());
+
+            // Update my inputs' flows with my new efficiency
+            foreach (IThroughput input in this.Inputs)
+            {
+                if (input.HasNeighbor())
+                {
+                    input.SetFlow(eachInputFlow);
+                    input.Neighbor.SetFlow(eachInputFlow);
+                }
+                else
+                {
+                    input.SetFlow(0);
+                }
+            }
+
+            // Update my input machines (recursively)
+            foreach (MachineBase inputMachine in this.InputMachines())
+            {
+                inputMachine.Backfill();
+            }
+        }
+
+        public override string ToString()
+        {
+            return string.Concat("[", string.Join("+", this.Inputs.Select(i => i.RateString(false))), "]:[",
+                string.Join("+", this.Outputs.Select(i => i.RateString(true))), "]");
         }
     }
 }

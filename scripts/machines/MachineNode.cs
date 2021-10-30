@@ -17,11 +17,11 @@ namespace FactoryPlanner.scripts.machines
 
         protected string RecipeId { get; set; }
 
-        public IEfficientMachine MachineModel { get; }
+        public EfficientMachine MachineModel { get; }
 
         internal MachineNode(int numInputs, int numOutputs)
         {
-            this.MachineModel = new Machine(numInputs, numOutputs, Resource.Any.Id);
+            this.MachineModel = new EfficientMachine(numInputs, numOutputs, Resource.Any.Id);
         }
 
         public override void _Ready()
