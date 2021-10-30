@@ -79,11 +79,13 @@ namespace MachineNetwork
 
         public void Update()
         {
+            // Update my input machines (recursively)
             foreach (Machine input in this.InputMachines())
             {
                 input.Update();
             }
 
+            // Determine my new efficiency based on my inputs
             uint newEfficiency;
             if (!this.HasInputSlots())
             {
@@ -99,21 +101,29 @@ namespace MachineNetwork
             }
 
             this.Efficiency = newEfficiency;
+
+            // Update my outputs' flows with my new efficiency
             foreach (IThroughput output in this.Outputs)
             {
                 output.SetEfficiency(this.EfficiencyMult());
             }
+
+            // Update my efficiency again based on my outputs
             this.Backfill();
         }
 
         private void Backfill()
         {
+            // Determine my new efficiency based on my outputs
             this.Efficiency = this.Outputs.Any() ? this.Outputs.Select(o => o.Efficiency()).Min() : 100 * MachineNetwork.Precision;
+
+            // Update my inputs' flows with my new efficiency
             foreach (IThroughput input in this.Inputs)
             {
                 input.SetEfficiency(this.EfficiencyMult());
             }
 
+            // Update my input machines (recursively)
             foreach (Machine inputMachine in this.InputMachines())
             {
                 inputMachine.Backfill();
