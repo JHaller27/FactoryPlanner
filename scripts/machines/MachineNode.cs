@@ -105,7 +105,7 @@ namespace FactoryPlanner.scripts.machines
                     output != null, outputResource.TypeId, outputResource.Color);
             }
 
-            this.EfficiencySlider.Value = (int)this.MachineModel.EfficiencyPercentage;
+            this.EfficiencySlider.Value = (int)this.MachineModel.GetEfficiencyPercentage();
         }
 
         protected static void AddEnumItems(OptionButton optionButton, Type enumType, int defaultIdx = 0)

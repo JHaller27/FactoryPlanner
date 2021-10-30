@@ -26,7 +26,7 @@ namespace MachineNetwork
 
     public interface IEfficientMachine : IMachine
     {
-        decimal EfficiencyPercentage { get; }
+        decimal GetEfficiencyPercentage();
     }
 
     public class Machine : IEfficientMachine
@@ -38,7 +38,7 @@ namespace MachineNetwork
         public int CountOutputs() => this.Outputs.Count;
 
         private uint Efficiency { get; set; }
-        public decimal EfficiencyPercentage => (decimal)this.Efficiency / 100;
+        public decimal GetEfficiencyPercentage() => (decimal)this.Efficiency / 100;
         private decimal EfficiencyMult() => (decimal)this.Efficiency / (100 * MachineNetwork.Precision);
 
         public Machine(int numInputs, int numOutputs, string defaultResourceId)
@@ -170,7 +170,7 @@ namespace MachineNetwork
 
         public override string ToString()
         {
-            return string.Join(", ", this.Inputs.Select(i => i.ToString())) + $":{this.EfficiencyPercentage:0.##}%:" + string.Join(", ", this.Outputs.Select(o => o.ToString()));
+            return string.Join(", ", this.Inputs.Select(i => i.ToString())) + $":{this.GetEfficiencyPercentage():0.##}%:" + string.Join(", ", this.Outputs.Select(o => o.ToString()));
         }
     }
 }
