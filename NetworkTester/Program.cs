@@ -64,7 +64,7 @@ namespace NetworkTester
             {
                 foreach ((int idx, uint capacity) in inputCapacities)
                 {
-                    machine.SetInput(idx, "Foo", capacity);
+                    machine.SetInputRecipe(idx, "Foo", capacity);
                 }
             }
 
@@ -72,7 +72,7 @@ namespace NetworkTester
             {
                 foreach ((int idx, uint capacity) in outputCapacities)
                 {
-                    machine.SetOutput(idx, "Foo", capacity);
+                    machine.SetOutputRecipe(idx, "Foo", capacity);
                 }
             }
         }

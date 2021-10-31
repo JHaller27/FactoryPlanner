@@ -14,6 +14,7 @@ public class GraphEdit : Godot.GraphEdit
         [(int)KeyList.Key1] = "res://Miner.tscn",
         [(int)KeyList.Key2] = "res://Smelter.tscn",
         [(int)KeyList.Key3] = "res://Constructor.tscn",
+        [(int)KeyList.Key4] = "res://Balancer.tscn",
     };
 
     // Called when the node enters the scene tree for the first time.
@@ -46,10 +47,10 @@ public class GraphEdit : Godot.GraphEdit
             if (KeyMachinePathMap.TryGetValue(eventKey.Scancode, out string path))
             {
                 PackedScene graphScene = ResourceLoader.Load<PackedScene>(path);
-                EfficientMachineNode graphNode = (EfficientMachineNode)graphScene.Instance();
+                MachineNode graphNode = (MachineNode)graphScene.Instance();
 
                 this.AddChild(graphNode);
-                Network.Instance.AddMachine(graphNode.MachineModel);
+                Network.Instance.AddMachine(graphNode.GetMachineModel());
                 graphNode.UpdateSlots();
 
                 Vector2 mousePosition = GetGlobalMousePosition();
@@ -67,7 +68,7 @@ public class GraphEdit : Godot.GraphEdit
             !this.HasInput(toName, toSlot) && !this.HasOutput(fromName, fromSlot))
         {
             this.ConnectNode(fromName, fromSlot, toName, toSlot);
-            Network.Instance.ConnectMachines(fromNode.MachineModel, fromSlot, toNode.MachineModel, toSlot);
+            Network.Instance.ConnectMachines(fromNode.GetMachineModel(), fromSlot, toNode.GetMachineModel(), toSlot);
 
             this.UpdateAllMachines();
         }
@@ -119,7 +120,7 @@ public class GraphEdit : Godot.GraphEdit
         EfficientMachineNode toNode = this.GetNode<EfficientMachineNode>(toName);
 
         this.DisconnectNode(fromName, fromSlot, toName, toSlot);
-        Network.Instance.DisconnectMachines(fromNode.MachineModel, fromSlot, toNode.MachineModel, toSlot);
+        Network.Instance.DisconnectMachines(fromNode.GetMachineModel(), fromSlot, toNode.GetMachineModel(), toSlot);
 
         this.UpdateAllMachines();
     }

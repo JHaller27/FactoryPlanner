@@ -1,21 +1,18 @@
-using Godot;
-using System;
+using FactoryPlanner.scripts.machines;
+using MachineNetwork;
+using Resource = FactoryPlanner.scripts.machines.Resource;
 
-public class Balancer : GraphNode
+public class BalancerNode : MachineNode
 {
-    // Declare member variables here. Examples:
-    // private int a = 2;
-    // private string b = "text";
+    private Balancer MachineModel { get; }
 
-    // Called when the node enters the scene tree for the first time.
-    public override void _Ready()
+    internal BalancerNode()
     {
-
+        this.MachineModel = new Balancer(3, 3, Resource.Any.Id);
     }
 
-//  // Called every frame. 'delta' is the elapsed time since the previous frame.
-//  public override void _Process(float delta)
-//  {
-//
-//  }
+    public override MachineBase GetMachineModel()
+    {
+        return this.MachineModel;
+    }
 }

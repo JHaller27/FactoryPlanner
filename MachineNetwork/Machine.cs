@@ -147,12 +147,12 @@ namespace MachineNetwork
             }
         }
 
-        public void SetInput(int idx, string resourceId, uint capacity)
+        public void SetInputRecipe(int idx, string resourceId, uint capacity)
         {
             this.Inputs[idx].SetRecipe(capacity, resourceId);
         }
 
-        public void SetOutput(int idx, string resourceId, uint capacity)
+        public void SetOutputRecipe(int idx, string resourceId, uint capacity)
         {
             this.Outputs[idx].SetRecipe(capacity, resourceId);
         }

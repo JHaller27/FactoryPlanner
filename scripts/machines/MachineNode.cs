@@ -5,29 +5,19 @@ using Network = MachineNetwork.MachineNetwork;
 
 namespace FactoryPlanner.scripts.machines
 {
-    public class EfficientMachineNode : GraphNode
+    public abstract class MachineNode : GraphNode
     {
-        private VBoxContainer InputContainer => this.GetChild<HBoxContainer>(0).GetChild<VBoxContainer>(0);
-        protected VBoxContainer ControlsContainer => this.GetChild<HBoxContainer>(0).GetChild<VBoxContainer>(1);
-        private VBoxContainer OutputContainer => this.GetChild<HBoxContainer>(0).GetChild<VBoxContainer>(2);
-        private HSlider EfficiencySlider => this.ControlsContainer.GetChild<HSlider>(1);
+        protected VBoxContainer InputContainer => this.GetChild<HBoxContainer>(0).GetChild<VBoxContainer>(0);
+        protected VBoxContainer OutputContainer => this.GetChild<HBoxContainer>(0).GetChild<VBoxContainer>(2);
+        protected Label ResourceNameLabel(VBoxContainer container, int slotId) => container.GetChild<VBoxContainer>(slotId).GetChild<Label>(0);
+        protected Label RateLabel(VBoxContainer container, int slotId) => container.GetChild<VBoxContainer>(slotId).GetChild<Label>(1);
 
-        private Label ResourceNameLabel(VBoxContainer container, int slotId) => container.GetChild<VBoxContainer>(slotId).GetChild<Label>(0);
-        private Label RateLabel(VBoxContainer container, int slotId) => container.GetChild<VBoxContainer>(slotId).GetChild<Label>(1);
-
-        protected string RecipeId { get; set; }
-
-        public EfficientMachine MachineModel { get; }
-
-        internal EfficientMachineNode(int numInputs, int numOutputs)
-        {
-            this.MachineModel = new EfficientMachine(numInputs, numOutputs, Resource.Any.Id);
-        }
+        public abstract MachineBase GetMachineModel();
 
         public override void _Ready()
         {
             // Add labels
-            for (int i = 0; i < this.MachineModel.CountInputs(); i++)
+            for (int i = 0; i < this.GetMachineModel().CountInputs(); i++)
             {
                 VBoxContainer slotLabelContainer = new VBoxContainer();
                 slotLabelContainer.AddChild(new Label());
@@ -36,7 +26,7 @@ namespace FactoryPlanner.scripts.machines
                 this.InputContainer.AddChild(slotLabelContainer);
             }
 
-            for (int i = 0; i < this.MachineModel.CountOutputs(); i++)
+            for (int i = 0; i < this.GetMachineModel().CountOutputs(); i++)
             {
                 VBoxContainer slotLabelContainer = new VBoxContainer();
                 slotLabelContainer.AddChild(new Label());
@@ -48,38 +38,17 @@ namespace FactoryPlanner.scripts.machines
             this.UpdateSlots();
         }
 
-        protected virtual Recipe ChooseRecipe()
+
+        public virtual void UpdateSlots()
         {
-            return Recipe.GetRecipe(this.RecipeId);
-        }
-
-        protected void UpdateRecipe()
-        {
-            Recipe recipe = this.ChooseRecipe();
-
-            foreach ((int idx, string resourceId, uint capacity) in recipe.ListInputs())
-            {
-                this.MachineModel.SetInput(idx, resourceId, capacity);
-            }
-            foreach ((int idx, string resourceId, uint capacity) in recipe.ListOutputs())
-            {
-                this.MachineModel.SetOutput(idx, resourceId, capacity);
-            }
-
-            Network.Instance.Recalculate();
-            this.UpdateSlots();
-        }
-
-        public void UpdateSlots()
-        {
-            int numInputs = this.MachineModel.CountInputs();
-            int numOutputs = this.MachineModel.CountOutputs();
+            int numInputs = this.GetMachineModel().CountInputs();
+            int numOutputs = this.GetMachineModel().CountOutputs();
 
             for (int slotId = 0; slotId < Math.Max(numInputs, numOutputs); slotId++)
             {
-                bool hasInput = this.MachineModel.TryGetInputSlot(slotId, out IThroughput input);
+                bool hasInput = this.GetMachineModel().TryGetInputSlot(slotId, out IThroughput input);
                 Resource inputResource = Resource.Any;
-                bool hasOutput = this.MachineModel.TryGetOutputSlot(slotId, out IThroughput output);
+                bool hasOutput = this.GetMachineModel().TryGetOutputSlot(slotId, out IThroughput output);
                 Resource outputResource = Resource.Any;
 
                 // Update labels
@@ -104,7 +73,53 @@ namespace FactoryPlanner.scripts.machines
                     input != null, inputResource.TypeId, inputResource.Color,
                     output != null, outputResource.TypeId, outputResource.Color);
             }
+        }
+    }
 
+    public class EfficientMachineNode : MachineNode
+    {
+        protected VBoxContainer ControlsContainer => this.GetChild<HBoxContainer>(0).GetChild<VBoxContainer>(1);
+        private HSlider EfficiencySlider => this.ControlsContainer.GetChild<HSlider>(1);
+
+        private EfficientMachine MachineModel { get; }
+
+        public override MachineBase GetMachineModel()
+        {
+            return this.MachineModel;
+        }
+
+        protected string RecipeId { get; set; }
+
+        internal EfficientMachineNode(int numInputs, int numOutputs)
+        {
+            this.MachineModel = new EfficientMachine(numInputs, numOutputs, Resource.Any.Id);
+        }
+
+        protected virtual Recipe ChooseRecipe()
+        {
+            return Recipe.GetRecipe(this.RecipeId);
+        }
+
+        protected void UpdateRecipe()
+        {
+            Recipe recipe = this.ChooseRecipe();
+
+            foreach ((int idx, string resourceId, uint capacity) in recipe.ListInputs())
+            {
+                this.MachineModel.SetInputRecipe(idx, resourceId, capacity);
+            }
+            foreach ((int idx, string resourceId, uint capacity) in recipe.ListOutputs())
+            {
+                this.MachineModel.SetOutputRecipe(idx, resourceId, capacity);
+            }
+
+            Network.Instance.Recalculate();
+            this.UpdateSlots();
+        }
+
+        public override void UpdateSlots()
+        {
+            base.UpdateSlots();
             this.EfficiencySlider.Value = (int)this.MachineModel.GetEfficiencyPercentage();
         }
 
