@@ -61,8 +61,8 @@ public class GraphEdit : Godot.GraphEdit
 
     private void _on_GraphEdit_connection_request(string fromName, int fromSlot, string toName, int toSlot)
     {
-        EfficientMachineNode fromNode = this.GetNode<EfficientMachineNode>(fromName);
-        EfficientMachineNode toNode = this.GetNode<EfficientMachineNode>(toName);
+        MachineNode fromNode = this.GetNode<MachineNode>(fromName);
+        MachineNode toNode = this.GetNode<MachineNode>(toName);
 
         if (this.IsValidConnectionType(fromNode.GetSlotTypeRight(fromSlot), toNode.GetSlotTypeLeft(toSlot)) &&
             !this.HasInput(toName, toSlot) && !this.HasOutput(fromName, fromSlot))
@@ -81,7 +81,7 @@ public class GraphEdit : Godot.GraphEdit
 
         foreach (object obj in this.GetChildren())
         {
-            if (obj is EfficientMachineNode machineNode)
+            if (obj is MachineNode machineNode)
             {
                 machineNode.UpdateSlots();
             }
@@ -116,8 +116,8 @@ public class GraphEdit : Godot.GraphEdit
 
     private void _on_GraphEdit_disconnection_request(string fromName, int fromSlot, string toName, int toSlot)
     {
-        EfficientMachineNode fromNode = this.GetNode<EfficientMachineNode>(fromName);
-        EfficientMachineNode toNode = this.GetNode<EfficientMachineNode>(toName);
+        MachineNode fromNode = this.GetNode<MachineNode>(fromName);
+        MachineNode toNode = this.GetNode<MachineNode>(toName);
 
         this.DisconnectNode(fromName, fromSlot, toName, toSlot);
         Network.Instance.DisconnectMachines(fromNode.GetMachineModel(), fromSlot, toNode.GetMachineModel(), toSlot);

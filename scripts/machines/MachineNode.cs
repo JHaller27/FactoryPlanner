@@ -7,14 +7,16 @@ namespace FactoryPlanner.scripts.machines
 {
     public abstract class MachineNode : GraphNode
     {
-        protected VBoxContainer InputContainer => this.GetChild<HBoxContainer>(0).GetChild<VBoxContainer>(0);
-        protected VBoxContainer OutputContainer => this.GetChild<HBoxContainer>(0).GetChild<VBoxContainer>(2);
-        protected Label ResourceNameLabel(VBoxContainer container, int slotId) => container.GetChild<VBoxContainer>(slotId).GetChild<Label>(0);
-        protected Label RateLabel(VBoxContainer container, int slotId) => container.GetChild<VBoxContainer>(slotId).GetChild<Label>(1);
+        private VBoxContainer InputContainer => this.GetChild<HBoxContainer>(0).GetChild<VBoxContainer>(0);
+        private VBoxContainer OutputContainer => this.GetChild<HBoxContainer>(0).GetChild<VBoxContainer>(2);
+        protected virtual Label InputResourceNameLabel(int slotId) => this.InputContainer.GetChild<VBoxContainer>(slotId).GetChild<Label>(0);
+        protected virtual Label InputRateLabel(int slotId) => this.InputContainer.GetChild<VBoxContainer>(slotId).GetChild<Label>(1);
+        protected virtual Label OutputResourceNameLabel(int slotId) => this.OutputContainer.GetChild<VBoxContainer>(slotId).GetChild<Label>(0);
+        protected virtual Label OutputRateLabel(int slotId) => this.OutputContainer.GetChild<VBoxContainer>(slotId).GetChild<Label>(1);
 
         public abstract MachineBase GetMachineModel();
 
-        public override void _Ready()
+        protected virtual void SetupGUI()
         {
             // Add labels
             for (int i = 0; i < this.GetMachineModel().CountInputs(); i++)
@@ -34,10 +36,13 @@ namespace FactoryPlanner.scripts.machines
 
                 this.OutputContainer.AddChild(slotLabelContainer);
             }
-
-            this.UpdateSlots();
         }
 
+        public override void _Ready()
+        {
+            this.SetupGUI();
+            this.UpdateSlots();
+        }
 
         public virtual void UpdateSlots()
         {
@@ -56,16 +61,16 @@ namespace FactoryPlanner.scripts.machines
                 {
                     inputResource = Resource.GetResource(input.ResourceId);
 
-                    this.ResourceNameLabel(this.InputContainer, slotId).Text = inputResource.Name;
-                    this.RateLabel(this.InputContainer, slotId).Text = input.RateString();
+                    this.InputResourceNameLabel(slotId).Text = inputResource.Name;
+                    this.InputRateLabel(slotId).Text = input.RateString();
                 }
 
                 if (hasOutput)
                 {
                     outputResource = Resource.GetResource(output.ResourceId);
 
-                    this.ResourceNameLabel(this.OutputContainer, slotId).Text = outputResource.Name;
-                    this.RateLabel(this.OutputContainer, slotId).Text = output.RateString();
+                    this.OutputResourceNameLabel(slotId).Text = outputResource.Name;
+                    this.OutputRateLabel(slotId).Text = output.RateString();
                 }
 
                 // Update slots

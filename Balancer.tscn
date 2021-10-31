@@ -7,38 +7,9 @@ margin_right = 260.0
 margin_bottom = 88.0
 title = "Balancer"
 show_close = true
-slot/0/left_enabled = true
-slot/0/left_type = 0
-slot/0/left_color = Color( 1, 1, 1, 1 )
-slot/0/right_enabled = true
-slot/0/right_type = 0
-slot/0/right_color = Color( 1, 1, 1, 1 )
 script = ExtResource( 1 )
 __meta__ = {
 "_edit_use_anchors_": false
 }
-
-[node name="HBoxContainer" type="HBoxContainer" parent="."]
-margin_left = 16.0
-margin_top = 24.0
-margin_right = 244.0
-margin_bottom = 24.0
-alignment = 1
-
-[node name="VBoxContainer2" type="VBoxContainer" parent="HBoxContainer"]
-rect_pivot_offset = Vector2( -352.221, -33.5466 )
-alignment = 1
-
-[node name="VBoxContainer" type="VBoxContainer" parent="HBoxContainer"]
-margin_left = 4.0
-margin_right = 224.0
-size_flags_horizontal = 3
-alignment = 1
-
-[node name="VBoxContainer3" type="VBoxContainer" parent="HBoxContainer"]
-margin_left = 228.0
-margin_right = 228.0
-rect_pivot_offset = Vector2( -352.221, -33.5466 )
-alignment = 1
 
 [connection signal="close_request" from="." to="." method="_on_GraphNode_close_request"]
