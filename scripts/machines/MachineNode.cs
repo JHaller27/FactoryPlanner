@@ -79,6 +79,11 @@ namespace FactoryPlanner.scripts.machines
                     output != null, outputResource.TypeId, outputResource.Color);
             }
         }
+
+        protected void _on_GraphNode_close_request()
+        {
+            this.QueueFree();
+        }
     }
 
     public class EfficientMachineNode : MachineNode

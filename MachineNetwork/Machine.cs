@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -91,7 +92,7 @@ namespace MachineNetwork
         }
 
         private IEnumerable<MachineBase> InputMachines() => this.Inputs
-            .Select(i => i.Neighbor?.Parent)
+            .Select(i => i.Neighbor?.GetParent())
             .Where(n => n != null);
 
         public override void Update()
@@ -163,13 +164,12 @@ namespace MachineNetwork
         }
     }
 
-        // private IList<IThroughput> Inputs { get; } = new List<IThroughput>();
-        // private IList<IThroughput> Outputs { get; } = new List<IThroughput>();
-
     public class Balancer : MachineBase
     {
         private IList<PassthroughThroughput> Inputs { get; } = new List<PassthroughThroughput>();
         private IList<PassthroughThroughput> Outputs { get; } = new List<PassthroughThroughput>();
+
+        private string DefaultResourceId { get; }
 
         public override int CountInputs() => this.Inputs.Count;
         public override int CountOutputs() => this.Outputs.Count;
@@ -179,6 +179,8 @@ namespace MachineNetwork
 
         public Balancer(int numInputs, int numOutputs, string defaultResourceId)
         {
+            this.DefaultResourceId = defaultResourceId;
+
             for (int i = 0; i < numInputs; i++)
             {
                 this.Inputs.Add(new PassthroughThroughput(this, defaultResourceId));
@@ -220,8 +222,24 @@ namespace MachineNetwork
         }
 
         private IEnumerable<MachineBase> InputMachines() => this.Inputs
-            .Select(i => i.Neighbor?.Parent)
+            .Select(i => i.Neighbor?.GetParent())
             .Where(n => n != null);
+
+        public void UpdateResource()
+        {
+            // Get the first ResourceId, error if any other slot has a different resource (this should be blocked by Godot)
+            string resourceId = (this.Inputs.FirstOrDefault(i => i.HasNeighbor()) ?? this.Outputs.FirstOrDefault(o => o.HasNeighbor()))?.Neighbor.ResourceId ?? this.DefaultResourceId;
+
+            foreach (PassthroughThroughput input in this.Inputs)
+            {
+                input.SetResource(resourceId);
+            }
+
+            foreach (PassthroughThroughput output in this.Outputs)
+            {
+                output.SetResource(resourceId);
+            }
+        }
 
         public override void Update()
         {

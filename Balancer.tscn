@@ -3,8 +3,8 @@
 [ext_resource path="res://scripts/BalancerNode.cs" type="Script" id=1]
 
 [node name="GraphNode" type="GraphNode"]
-margin_right = 260.0
-margin_bottom = 88.0
+margin_right = 120.0
+margin_bottom = 80.0
 title = "Balancer"
 show_close = true
 script = ExtResource( 1 )
