@@ -7,9 +7,21 @@ margin_right = 120.0
 margin_bottom = 80.0
 title = "Balancer"
 show_close = true
+slot/0/left_enabled = false
+slot/0/left_type = 0
+slot/0/left_color = Color( 1, 1, 1, 1 )
+slot/0/right_enabled = false
+slot/0/right_type = 0
+slot/0/right_color = Color( 1, 1, 1, 1 )
 script = ExtResource( 1 )
 __meta__ = {
 "_edit_use_anchors_": false
 }
+
+[node name="Panel" type="Panel" parent="."]
+margin_left = 16.0
+margin_top = 24.0
+margin_right = 104.0
+margin_bottom = 24.0
 
 [connection signal="close_request" from="." to="." method="_on_GraphNode_close_request"]

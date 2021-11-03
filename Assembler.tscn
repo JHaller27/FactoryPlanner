@@ -1,11 +1,11 @@
 [gd_scene load_steps=2 format=2]
 
-[ext_resource path="res://scripts/ConstructorNode.cs" type="Script" id=1]
+[ext_resource path="res://scripts/AssemblerNode.cs" type="Script" id=1]
 
 [node name="GraphNode" type="GraphNode"]
 margin_right = 260.0
 margin_bottom = 88.0
-title = "Constructor"
+title = "Assembler"
 show_close = true
 slot/0/left_enabled = false
 slot/0/left_type = 0

@@ -7,34 +7,44 @@ namespace FactoryPlanner.scripts.machines
 {
     public abstract class MachineNode : GraphNode
     {
-        private VBoxContainer InputContainer => this.GetChild<HBoxContainer>(0).GetChild<VBoxContainer>(0);
-        private VBoxContainer OutputContainer => this.GetChild<HBoxContainer>(0).GetChild<VBoxContainer>(2);
-        protected virtual Label InputResourceNameLabel(int slotId) => this.InputContainer.GetChild<VBoxContainer>(slotId).GetChild<Label>(0);
-        protected virtual Label InputRateLabel(int slotId) => this.InputContainer.GetChild<VBoxContainer>(slotId).GetChild<Label>(1);
-        protected virtual Label OutputResourceNameLabel(int slotId) => this.OutputContainer.GetChild<VBoxContainer>(slotId).GetChild<Label>(0);
-        protected virtual Label OutputRateLabel(int slotId) => this.OutputContainer.GetChild<VBoxContainer>(slotId).GetChild<Label>(1);
+        private HSplitContainer GetSlotContainer(int slotId) => this.GetChild<HSplitContainer>(slotId+1);
+
+        private Label InputResourceNameLabel(int slotId) => this.GetSlotContainer(slotId).GetChild<VBoxContainer>(0).GetChild<Label>(0);
+        private Label InputRateLabel(int slotId) => this.GetSlotContainer(slotId).GetChild<VBoxContainer>(0).GetChild<Label>(1);
+        private Label OutputResourceNameLabel(int slotId) => this.GetSlotContainer(slotId).GetChild<VBoxContainer>(1).GetChild<Label>(0);
+        private Label OutputRateLabel(int slotId) => this.GetSlotContainer(slotId).GetChild<VBoxContainer>(1).GetChild<Label>(1);
+
 
         public abstract MachineBase GetMachineModel();
 
         protected virtual void SetupGUI()
         {
-            // Add labels
-            for (int i = 0; i < this.GetMachineModel().CountInputs(); i++)
+            // Add HSplitContainers
+            for (int i = 0; i < Math.Max(this.GetMachineModel().CountInputs(), this.GetMachineModel().CountOutputs()); i++)
             {
-                VBoxContainer slotLabelContainer = new VBoxContainer();
-                slotLabelContainer.AddChild(new Label());
-                slotLabelContainer.AddChild(new Label());
+                HSplitContainer container = new HSplitContainer();
 
-                this.InputContainer.AddChild(slotLabelContainer);
-            }
+                // Add left VBox
+                VBoxContainer leftVBox = new VBoxContainer();
+                Label leftLabel1 = new Label();
+                Label leftLabel2 = new Label();
+                leftLabel1.Align = Label.AlignEnum.Left;
+                leftLabel2.Align = Label.AlignEnum.Left;
+                leftVBox.AddChild(leftLabel1);
+                leftVBox.AddChild(leftLabel2);
 
-            for (int i = 0; i < this.GetMachineModel().CountOutputs(); i++)
-            {
-                VBoxContainer slotLabelContainer = new VBoxContainer();
-                slotLabelContainer.AddChild(new Label());
-                slotLabelContainer.AddChild(new Label());
+                // Add right VBox
+                VBoxContainer rightVBox = new VBoxContainer();
+                Label rightLabel1 = new Label();
+                Label rightLabel2 = new Label();
+                rightLabel1.Align = Label.AlignEnum.Right;
+                rightLabel2.Align = Label.AlignEnum.Right;
+                rightVBox.AddChild(rightLabel1);
+                rightVBox.AddChild(rightLabel2);
 
-                this.OutputContainer.AddChild(slotLabelContainer);
+                container.AddChild(leftVBox);
+                container.AddChild(rightVBox);
+                this.AddChild(container);
             }
         }
 
@@ -74,7 +84,7 @@ namespace FactoryPlanner.scripts.machines
                 }
 
                 // Update slots
-                this.SetSlot(slotId,
+                this.SetSlot(slotId+1,
                     input != null, inputResource.TypeId, inputResource.Color,
                     output != null, outputResource.TypeId, outputResource.Color);
             }

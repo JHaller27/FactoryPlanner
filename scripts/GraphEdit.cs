@@ -14,7 +14,8 @@ public class GraphEdit : Godot.GraphEdit
         [(int)KeyList.Key1] = "res://Miner.tscn",
         [(int)KeyList.Key2] = "res://Smelter.tscn",
         [(int)KeyList.Key3] = "res://Constructor.tscn",
-        [(int)KeyList.Key4] = "res://Balancer.tscn",
+        [(int)KeyList.Key4] = "res://Assembler.tscn",
+        [(int)KeyList.Key5] = "res://Balancer.tscn",
     };
 
     // Called when the node enters the scene tree for the first time.
@@ -64,7 +65,7 @@ public class GraphEdit : Godot.GraphEdit
         MachineNode fromNode = this.GetNode<MachineNode>(fromName);
         MachineNode toNode = this.GetNode<MachineNode>(toName);
 
-        if (this.IsValidConnectionType(fromNode.GetSlotTypeRight(fromSlot), toNode.GetSlotTypeLeft(toSlot)) &&
+        if (this.IsValidConnectionType(fromNode.GetSlotTypeRight(fromSlot+1), toNode.GetSlotTypeLeft(toSlot+1)) &&
             !this.HasInput(toName, toSlot) && !this.HasOutput(fromName, fromSlot))
         {
             this.ConnectNode(fromName, fromSlot, toName, toSlot);
