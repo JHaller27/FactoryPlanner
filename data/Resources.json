@@ -25,6 +25,18 @@
       "Color": "Silver"
     },
     {
+      "Name": "Reinforced Iron Plate",
+      "Color": "Silver"
+    },
+    {
+      "Name": "Screw",
+      "Color": "Silver"
+    },
+    {
+      "Name": "Rotor",
+      "Color": "Silver"
+    },
+    {
       "Name": "Wire",
       "Color": "Chocolate"
     },
@@ -39,6 +51,10 @@
     {
       "Name": "Concrete",
       "Color": "Bisque"
+    },
+    {
+      "Name": "Smart Plating",
+      "Color": "Silver"
     }
   ],
   "Recipes": [
@@ -191,6 +207,65 @@
         {
           "Resource": "Concrete",
           "Rate": 4500
+        }
+      ]
+    },
+    {
+      "Key": "ConstructScrew",
+      "Name": "Screws",
+      "Tags": ["Constructor"],
+      "Inputs": [
+        {
+          "Resource": "IronRod",
+          "Rate": 1000
+        }
+      ],
+      "Outputs": [
+        {
+          "Resource": "Screw",
+          "Rate": 4000
+        }
+      ]
+    },
+    {
+      "Key": "AssembleRotor",
+      "Name": "Rotors",
+      "Tags": ["Assembler"],
+      "Inputs": [
+        {
+          "Resource": "Screw",
+          "Rate": 2500
+        },
+        {
+          "Resource": "IronRod",
+          "Rate": 500
+        }
+      ],
+      "Outputs": [
+        {
+          "Resource": "Rotor",
+          "Rate": 400
+        }
+      ]
+    },
+    {
+      "Key": "AssembleReinforcedPlates",
+      "Name": "Reinforced Iron Plates",
+      "Tags": ["Assembler"],
+      "Inputs": [
+        {
+          "Resource": "Screw",
+          "Rate": 6000
+        },
+        {
+          "Resource": "IronPlate",
+          "Rate": 3000
+        }
+      ],
+      "Outputs": [
+        {
+          "Resource": "ReinforcedIronPlate",
+          "Rate": 500
         }
       ]
     }
