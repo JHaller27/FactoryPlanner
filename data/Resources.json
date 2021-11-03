@@ -216,7 +216,7 @@
       "Tags": ["Constructor"],
       "Inputs": [
         {
-          "Resource": "IronRod",
+          "Resource": "Iron Rod",
           "Rate": 1000
         }
       ],
@@ -237,7 +237,7 @@
           "Rate": 2500
         },
         {
-          "Resource": "IronRod",
+          "Resource": "Iron Rod",
           "Rate": 500
         }
       ],
@@ -258,13 +258,13 @@
           "Rate": 6000
         },
         {
-          "Resource": "IronPlate",
+          "Resource": "Iron Plate",
           "Rate": 3000
         }
       ],
       "Outputs": [
         {
-          "Resource": "ReinforcedIronPlate",
+          "Resource": "Reinforced Iron Plate",
           "Rate": 500
         }
       ]
