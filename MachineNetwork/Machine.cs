@@ -263,8 +263,8 @@ namespace MachineNetwork
                 }
                 else if (output.HasNeighbor())
                 {
+                    eachOutputFlow = output.Neighbor.SetFlow(eachOutputFlow);
                     output.SetFlow(eachOutputFlow);
-                    output.Neighbor.SetFlow(eachOutputFlow);
                 }
                 else
                 {
