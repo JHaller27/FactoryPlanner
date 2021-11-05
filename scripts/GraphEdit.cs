@@ -55,7 +55,7 @@ public class GraphEdit : Godot.GraphEdit
                 graphNode.UpdateSlots();
 
                 Vector2 mousePosition = GetGlobalMousePosition();
-                graphNode.Offset = mousePosition;
+                graphNode.Offset = mousePosition + this.ScrollOffset;
             }
         }
     }
