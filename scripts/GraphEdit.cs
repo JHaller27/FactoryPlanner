@@ -18,6 +18,10 @@ public class GraphEdit : Godot.GraphEdit
         [(int)KeyList.Key5] = "res://Balancer.tscn",
     };
 
+    private MachineNode Selected { get; set; }
+    private bool CtrlHeld { get; set; }
+    private bool JustDuped { get; set; }
+
     // Called when the node enters the scene tree for the first time.
     public override void _Ready()
     {
@@ -43,9 +47,9 @@ public class GraphEdit : Godot.GraphEdit
 
     public override void _Input(InputEvent inputEvent)
     {
-        if (inputEvent is InputEventKey eventKey && eventKey.Pressed)
+        if (inputEvent is InputEventKey eventKey)
         {
-            if (KeyMachinePathMap.TryGetValue(eventKey.Scancode, out string path))
+            if (KeyMachinePathMap.TryGetValue(eventKey.Scancode, out string path) && eventKey.Pressed)
             {
                 PackedScene graphScene = ResourceLoader.Load<PackedScene>(path);
                 MachineNode graphNode = (MachineNode)graphScene.Instance();
@@ -56,6 +60,39 @@ public class GraphEdit : Godot.GraphEdit
 
                 Vector2 mousePosition = GetGlobalMousePosition();
                 graphNode.Offset = mousePosition + this.ScrollOffset;
+
+                this.SetSelected(graphNode);
+            }
+            else if (eventKey.Scancode == (int)KeyList.Control)
+            {
+                this.CtrlHeld = eventKey.Pressed;
+                if (!this.CtrlHeld)
+                {
+                    this.JustDuped = false;
+                }
+            }
+            else if (eventKey.Scancode == (int)KeyList.D && this.CtrlHeld)
+            {
+                if (this.Selected == null)
+                {
+                }
+                else if (eventKey.Pressed && !this.JustDuped)
+                {
+                    this.JustDuped = true;
+
+                    MachineNode dupe = (MachineNode)this.Selected.Duplicate();
+                    this.AddChild(dupe);
+                    Network.Instance.AddMachine(dupe.GetMachineModel());
+                    dupe.UpdateSlots();
+
+                    Vector2 mousePosition = GetGlobalMousePosition();
+                    dupe.Offset = mousePosition + this.ScrollOffset;
+                    this.SetSelected(dupe);
+                }
+                else
+                {
+                    this.JustDuped = false;
+                }
             }
         }
     }
@@ -124,5 +161,15 @@ public class GraphEdit : Godot.GraphEdit
         Network.Instance.DisconnectMachines(fromNode.GetMachineModel(), fromSlot, toNode.GetMachineModel(), toSlot);
 
         this.UpdateAllMachines();
+    }
+
+    private void _on_GraphEdit_node_selected(MachineNode node)
+    {
+        this.Selected = node;
+    }
+
+    private void _on_GraphEdit_node_unselected(object node)
+    {
+        this.Selected = null;
     }
 }
