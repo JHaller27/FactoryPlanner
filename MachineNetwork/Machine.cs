@@ -257,11 +257,7 @@ namespace MachineNetwork
             // Update my outputs' flows
             foreach (IThroughput output in this.Outputs)
             {
-                if (hasNoConnectedOutput)
-                {
-                    output.SetFlow(eachOutputFlow);
-                }
-                else if (output.HasNeighbor())
+                if (output.HasNeighbor())
                 {
                     eachOutputFlow = output.Neighbor.SetFlow(eachOutputFlow);
                     output.SetFlow(eachOutputFlow);
