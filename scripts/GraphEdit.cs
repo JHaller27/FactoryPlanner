@@ -47,39 +47,38 @@ public class GraphEdit : Godot.GraphEdit
 
     public override void _Input(InputEvent inputEvent)
     {
-        if (inputEvent is InputEventKey eventKey)
+        if (!(inputEvent is InputEventKey eventKey)) return;
+
+        if (KeyMachinePathMap.TryGetValue(eventKey.Scancode, out string path) && eventKey.Pressed)
         {
-            if (KeyMachinePathMap.TryGetValue(eventKey.Scancode, out string path) && eventKey.Pressed)
-            {
-                PackedScene graphScene = ResourceLoader.Load<PackedScene>(path);
-                MachineNode graphNode = (MachineNode)graphScene.Instance();
+            PackedScene graphScene = ResourceLoader.Load<PackedScene>(path);
+            MachineNode graphNode = (MachineNode)graphScene.Instance();
 
-                this.AddMachine(graphNode);
-            }
-            else if (eventKey.Scancode == (int)KeyList.Control)
+            this.AddMachine(graphNode);
+        }
+        else if (eventKey.Scancode == (int)KeyList.Control)
+        {
+            this.CtrlHeld = eventKey.Pressed;
+            if (!this.CtrlHeld)
             {
-                this.CtrlHeld = eventKey.Pressed;
-                if (!this.CtrlHeld)
-                {
-                    this.JustDuped = false;
-                }
+                this.JustDuped = false;
             }
-            else if (eventKey.Scancode == (int)KeyList.D && this.CtrlHeld)
+        }
+        else if (eventKey.Scancode == (int)KeyList.D && this.CtrlHeld)
+        {
+            if (this.Selected == null)
             {
-                if (this.Selected == null)
-                {
-                }
-                else if (eventKey.Pressed && !this.JustDuped)
-                {
-                    this.JustDuped = true;
+            }
+            else if (eventKey.Pressed && !this.JustDuped)
+            {
+                this.JustDuped = true;
 
-                    MachineNode dupe = (MachineNode)this.Selected.Duplicate();
-                    this.AddMachine(dupe);
-                }
-                else
-                {
-                    this.JustDuped = false;
-                }
+                MachineNode dupe = (MachineNode)this.Selected.Duplicate();
+                this.AddMachine(dupe);
+            }
+            else
+            {
+                this.JustDuped = false;
             }
         }
     }
