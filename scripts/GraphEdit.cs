@@ -54,14 +54,7 @@ public class GraphEdit : Godot.GraphEdit
                 PackedScene graphScene = ResourceLoader.Load<PackedScene>(path);
                 MachineNode graphNode = (MachineNode)graphScene.Instance();
 
-                this.AddChild(graphNode);
-                Network.Instance.AddMachine(graphNode.GetMachineModel());
-                graphNode.UpdateSlots();
-
-                Vector2 mousePosition = GetGlobalMousePosition();
-                graphNode.Offset = mousePosition + this.ScrollOffset;
-
-                this.SetSelected(graphNode);
+                this.AddMachine(graphNode);
             }
             else if (eventKey.Scancode == (int)KeyList.Control)
             {
@@ -81,13 +74,7 @@ public class GraphEdit : Godot.GraphEdit
                     this.JustDuped = true;
 
                     MachineNode dupe = (MachineNode)this.Selected.Duplicate();
-                    this.AddChild(dupe);
-                    Network.Instance.AddMachine(dupe.GetMachineModel());
-                    dupe.UpdateSlots();
-
-                    Vector2 mousePosition = GetGlobalMousePosition();
-                    dupe.Offset = mousePosition + this.ScrollOffset;
-                    this.SetSelected(dupe);
+                    this.AddMachine(dupe);
                 }
                 else
                 {
@@ -95,6 +82,18 @@ public class GraphEdit : Godot.GraphEdit
                 }
             }
         }
+    }
+
+    private void AddMachine(MachineNode node)
+    {
+        this.AddChild(node);
+        Network.Instance.AddMachine(node.GetMachineModel());
+        node.UpdateSlots();
+
+        Vector2 mousePosition = GetGlobalMousePosition();
+        node.Offset = mousePosition + this.ScrollOffset;
+
+        this.SetSelected(node);
     }
 
     private void _on_GraphEdit_connection_request(string fromName, int fromSlot, string toName, int toSlot)
