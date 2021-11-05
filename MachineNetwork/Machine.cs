@@ -252,12 +252,13 @@ namespace MachineNetwork
             // Get new output flow based on total input flow & number of connected neighbors
             uint totalInputFlow = this.Inputs.Aggregate<PassthroughThroughput, uint>(0, (current, input) => current + input.FlowRate);
             bool hasNoConnectedOutput = this.CountConnectedOutputs() == 0;
-            uint eachOutputFlow = hasNoConnectedOutput ? (uint)(totalInputFlow / this.CountOutputs()) : (uint)(totalInputFlow / this.CountConnectedOutputs());
+            uint eachOutputFlow = hasNoConnectedOutput ? totalInputFlow : (uint)(totalInputFlow / this.CountConnectedOutputs());
 
             // Update my outputs' flows
+            bool first = true;
             foreach (IThroughput output in this.Outputs)
             {
-                if (hasNoConnectedOutput)
+                if (hasNoConnectedOutput && first)
                 {
                     output.SetFlow(eachOutputFlow);
                 }
@@ -270,6 +271,8 @@ namespace MachineNetwork
                 {
                     output.SetFlow(0);
                 }
+
+                first = false;
             }
 
             // Update my efficiency again based on my outputs
