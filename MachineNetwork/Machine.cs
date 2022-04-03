@@ -148,7 +148,7 @@ namespace MachineNetwork
 
             foreach (IEfficientThroughput input in this.Inputs)
             {
-                input.SetEfficiency(this.Efficiency);
+                input.SetEfficiency(this.EfficiencyMult());
             }
 
             foreach (MachineBase inputMachine in this.InputMachines())
