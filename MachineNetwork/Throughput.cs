@@ -13,11 +13,12 @@ namespace MachineNetwork
         bool HasNeighbor();
         uint SetFlow(uint flow);
         string RateString();
+        bool IsAtCapacity();
     }
 
     public interface IEfficientThroughput : IThroughput
     {
-        void SetEfficiency(decimal efficiencyMult);
+        bool SetEfficiency(decimal efficiencyMult);
         uint Efficiency();
         void SetRecipe(uint capacity, string resourceId);
     }
@@ -49,12 +50,18 @@ namespace MachineNetwork
 
         public bool HasNeighbor() => this.Neighbor != null;
 
-        public void SetEfficiency(decimal efficiencyMult)
+        public bool SetEfficiency(decimal efficiencyMult)
         {
-            this.Flow = (uint)(this.Capacity * efficiencyMult);
+            uint newFlow = (uint)(this.Capacity * efficiencyMult);
+            this.Flow = newFlow;
 
-            if (this.Neighbor == null) return;
-            this.Flow = this.Neighbor.SetFlow(this.Flow);
+            if (this.Neighbor == null) return true;
+
+            uint neighborNewFlow = this.Neighbor.SetFlow(this.Flow);
+            bool canHandle = neighborNewFlow == this.Flow;
+            this.Flow = neighborNewFlow;
+
+            return canHandle;
         }
 
         public uint SetFlow(uint flow)
@@ -72,6 +79,11 @@ namespace MachineNetwork
         public string RateString()
         {
             return $"{this.Flow / Network.Precision:0.##} / {this.Capacity / Network.Precision:0.##}";
+        }
+
+        public bool IsAtCapacity()
+        {
+            return this.Flow == this.Capacity;
         }
 
         public override string ToString()
@@ -140,6 +152,11 @@ namespace MachineNetwork
         public string RateString()
         {
             return $"{this.FlowRate / Network.Precision:0.##}";
+        }
+
+        public bool IsAtCapacity()
+        {
+            return true;
         }
 
         public string RateString(bool showNeighbor)

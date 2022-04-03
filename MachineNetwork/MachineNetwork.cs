@@ -70,12 +70,46 @@ namespace MachineNetwork
             this.DisconnectMachines(this.GetMachine(fromId), fromSlot, this.GetMachine(toId), toSlot);
         }
 
+        private static IEnumerable<MachineBase> Traverse(IEnumerable<MachineBase> start)
+        {
+            Queue<MachineBase> queue = new(start.ToList());
+            while (queue.Count > 0)
+            {
+                MachineBase curr = queue.Dequeue();
+                yield return curr;
+
+                foreach (MachineBase outputDestination in curr.GetOutputDestinations())
+                {
+                    queue.Enqueue(outputDestination);
+                }
+            }
+        }
+
         public void Recalculate()
         {
-            foreach (MachineBase leaf in this.Leaves)
+            // Update roots first
+            List<MachineBase> firstAfterRoots = new();
+            foreach (MachineBase root in this.Roots)
             {
-                leaf.Update();
+                root.Update();
+                firstAfterRoots.AddRange(root.GetOutputDestinations());
             }
+
+            bool needToRefresh;
+            do
+            {
+                HashSet<MachineBase> seen = new();
+                needToRefresh = false;
+
+                List<MachineBase> machineOrder = Traverse(firstAfterRoots).ToList();
+                foreach (MachineBase curr in machineOrder.Where(curr => !seen.Contains(curr)))
+                {
+                    seen.Add(curr);
+
+                    needToRefresh = curr.Update();
+                    if (needToRefresh) break;
+                }
+            } while (needToRefresh);
         }
 
         public override string ToString()

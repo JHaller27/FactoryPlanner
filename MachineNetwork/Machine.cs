@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -27,14 +26,29 @@ namespace MachineNetwork
             input.SetNeighbor(null);
         }
 
+        public IEnumerable<MachineBase> GetOutputDestinations()
+        {
+            for (int i = 0; i < this.CountOutputs(); i++)
+            {
+                if (!this.TryGetOutputSlot(i, out IThroughput output)) continue;
+                IThroughput input = output.Neighbor;
+
+                if (input == null) continue;
+
+                yield return input.GetParent();
+            }
+        }
+
         public abstract bool HasConnectedInputs();
         public abstract bool TryGetInputSlot(int idx, out IThroughput input);
 
         public abstract bool HasConnectedOutputs();
         public abstract bool TryGetOutputSlot(int idx, out IThroughput output);
 
-        public abstract void Update();
-        public abstract void Backfill();
+        // Returns true if need to re-update, false otherwise
+        public abstract bool Update();
+
+        internal abstract void ReverseUpdate();
     }
 
     public class EfficientMachine : MachineBase
@@ -95,56 +109,51 @@ namespace MachineNetwork
             .Select(i => i.Neighbor?.GetParent())
             .Where(n => n != null);
 
-        public override void Update()
+        public override bool Update()
         {
-            // Update my input machines (recursively)
-            foreach (MachineBase input in this.InputMachines())
-            {
-                input.Update();
-            }
-
             // Determine my new efficiency based on my inputs
-            uint newEfficiency;
             if (!this.HasInputSlots())
             {
-                newEfficiency = 100 * MachineNetwork.Precision;
+                this.Efficiency = 100 * MachineNetwork.Precision;
             }
             else if (this.HasDisconnectedInputs())
             {
-                newEfficiency = 0;
+                this.Efficiency = 0;
             }
             else
             {
-                newEfficiency = this.Inputs.Select(i => i.Efficiency()).Min();
+                this.Efficiency = this.Inputs.Select(i => i.Efficiency()).Min();
             }
-
-            this.Efficiency = newEfficiency;
 
             // Update my outputs' flows with my new efficiency
             foreach (IEfficientThroughput output in this.Outputs)
             {
-                output.SetEfficiency(this.EfficiencyMult());
+                bool canHandle = output.SetEfficiency(this.EfficiencyMult());
+                if (canHandle) continue;
+
+                this.ReverseUpdate();
+                return true;
             }
 
-            // Update my efficiency again based on my outputs
-            this.Backfill();
+            return false;
         }
 
-        public override void Backfill()
+        internal override void ReverseUpdate()
         {
-            // Determine my new efficiency based on my outputs
-            this.Efficiency = this.Outputs.Any() ? this.Outputs.Select(o => o.Efficiency()).Min() : 100 * MachineNetwork.Precision;
+            // To get here, this must have been called by an output-neighbor
+            // Thus, we are guaranteed to have output-neighbors which already have an up-to-date efficiency
+            this.Efficiency = this.Outputs.Select(i => i.Efficiency()).Min();
 
-            // Update my inputs' flows with my new efficiency
+            // No need to update outputs' efficiency - that will be handled by the MachineNetwork
+
             foreach (IEfficientThroughput input in this.Inputs)
             {
-                input.SetEfficiency(this.EfficiencyMult());
+                input.SetEfficiency(this.Efficiency);
             }
 
-            // Update my input machines (recursively)
             foreach (MachineBase inputMachine in this.InputMachines())
             {
-                inputMachine.Backfill();
+                inputMachine.ReverseUpdate();
             }
         }
 
@@ -241,14 +250,8 @@ namespace MachineNetwork
             }
         }
 
-        public override void Update()
+        public override bool Update()
         {
-            // Update my input machines (recursively)
-            foreach (MachineBase input in this.InputMachines())
-            {
-                input.Update();
-            }
-
             // Get new output flow based on total input flow & number of connected neighbors
             uint totalInputFlow = this.Inputs.Aggregate<PassthroughThroughput, uint>(0, (current, input) => current + input.FlowRate);
             bool hasNoConnectedOutput = this.CountConnectedOutputs() == 0;
@@ -264,8 +267,16 @@ namespace MachineNetwork
                 }
                 else if (output.HasNeighbor())
                 {
-                    eachOutputFlow = output.Neighbor.SetFlow(eachOutputFlow);
-                    output.SetFlow(eachOutputFlow);
+                    uint newFlow = output.Neighbor.SetFlow(eachOutputFlow);
+                    // We can ignore the output (new flow) since our own outputs will always be able to handle anything we give them
+                    _ = output.SetFlow(newFlow);
+
+                    bool canHandle = newFlow == eachOutputFlow;
+                    if (!canHandle)
+                    {
+                        this.ReverseUpdate();
+                        return true;
+                    }
                 }
                 else
                 {
@@ -275,34 +286,50 @@ namespace MachineNetwork
                 first = false;
             }
 
-            // Update my efficiency again based on my outputs
-            this.Backfill();
+            return false;
         }
 
-        public override void Backfill()
+        internal override void ReverseUpdate()
         {
-            // Get new input flow based on total output flow & number of connected neighbors
-            uint totalOutputFlow = this.Outputs.Aggregate<PassthroughThroughput, uint>(0, (current, input) => current + input.FlowRate);
-            uint eachInputFlow = this.CountConnectedInputs() == 0 ? 0 : (uint)(totalOutputFlow / this.CountConnectedInputs());
+            // To get here, this must have been called by an output-neighbor
+            // Thus, we are guaranteed to have output-neighbors which already have an up-to-date efficiency
+            uint totalOutputFlow = this.Outputs.Select(o => o.FlowRate).Aggregate((curr, acc) => curr + acc);
 
-            // Update my inputs' flows with my new efficiency
-            foreach (IThroughput input in this.Inputs)
+            // First, try to redistribute outputs
+            List<PassthroughThroughput> outputsWithCapacity = this.Outputs
+                .Where(o => o.HasNeighbor() && !o.Neighbor.IsAtCapacity())
+                .ToList();
+
+            // If we have outputs that can handle more capacity, update them to do so
+            uint totalInputFlow = this.Inputs.Select(i => i.FlowRate).Aggregate((curr, acc) => curr + acc);
+            uint remainingOutputFlow = totalInputFlow - totalOutputFlow;
+            foreach (PassthroughThroughput output in outputsWithCapacity)
             {
-                if (input.HasNeighbor())
-                {
-                    input.SetFlow(eachInputFlow);
-                    input.Neighbor.SetFlow(eachInputFlow);
-                }
-                else
-                {
-                    input.SetFlow(0);
-                }
+                uint oldFlow = output.FlowRate;
+                uint newFlow = output.SetFlow(remainingOutputFlow);
+                output.Neighbor.SetFlow(newFlow);
+
+                uint flowDelta = oldFlow - newFlow;
+                remainingOutputFlow -= flowDelta;
             }
 
-            // Update my input machines (recursively)
+            // If we have no remaining flow, we're done
+            if (remainingOutputFlow == 0)
+            {
+                return;
+            }
+
+            // If no outputs can handle more capacity, reverse-update inputs
+            uint eachInputFlow = (uint)(totalOutputFlow / this.CountConnectedInputs());
+            foreach (PassthroughThroughput input in this.Inputs.Where(i => i.HasNeighbor()))
+            {
+                uint newFlow = input.SetFlow(eachInputFlow);
+                input.Neighbor.SetFlow(newFlow);
+            }
+
             foreach (MachineBase inputMachine in this.InputMachines())
             {
-                inputMachine.Backfill();
+                inputMachine.ReverseUpdate();
             }
         }
 
