@@ -9,9 +9,11 @@ namespace MachineNetwork
         public static MachineNetwork Instance => _instance ?? (_instance = new MachineNetwork());
 
         public static uint Precision { get; set;  }
-        private IDictionary<int, MachineBase> RandomAccessList { get; } = new Dictionary<int, MachineBase>();
-        private ISet<MachineBase> Roots { get; } = new HashSet<MachineBase>();
-        private ISet<MachineBase> Leaves { get; } = new HashSet<MachineBase>();
+        private Dictionary<int, MachineBase> RandomAccessList { get; } = new();
+        private Dictionary<MachineBase, int> ReverseRandomAccessList { get; } = new();
+
+        private HashSet<MachineBase> Roots { get; } = new();
+        private HashSet<MachineBase> Leaves { get; } = new();
 
         private MachineNetwork()
         {
@@ -21,12 +23,34 @@ namespace MachineNetwork
         {
             int key = this.RandomAccessList.Count;
             this.RandomAccessList.Add(key, machine);
+            this.ReverseRandomAccessList.Add(machine, key);
             this.Roots.Add(machine);
             this.Leaves.Add(machine);
 
             this.Recalculate();
 
             return key;
+        }
+
+        public void RemoveMachine(MachineBase machineBase)
+        {
+            foreach (MachineBase neighbor in machineBase.DisconnectAllInputs())
+            {
+                this.DisconnectMachines(neighbor, machineBase);
+            }
+            foreach (MachineBase neighbor in machineBase.DisconnectAllOutputs())
+            {
+                this.DisconnectMachines(machineBase, neighbor);
+            }
+
+            int key = this.ReverseRandomAccessList[machineBase];
+            this.ReverseRandomAccessList.Remove(machineBase);
+            this.RandomAccessList.Remove(key);
+
+            this.Roots.Remove(machineBase);
+            this.Leaves.Remove(machineBase);
+
+            this.Recalculate();
         }
 
         private MachineBase GetMachine(int idx)
@@ -49,10 +73,8 @@ namespace MachineNetwork
             this.ConnectMachines(this.GetMachine(fromId), fromSlot, this.GetMachine(toId), toSlot);
         }
 
-        public void DisconnectMachines(MachineBase from, int fromSlot, MachineBase to, int toSlot)
+        private void DisconnectMachines(MachineBase from, MachineBase to)
         {
-            from.DisconnectFrom(fromSlot, to, toSlot);
-
             if (!from.HasConnectedOutputs())
             {
                 this.Leaves.Add(from);
@@ -61,6 +83,12 @@ namespace MachineNetwork
             {
                 this.Roots.Add(to);
             }
+        }
+
+        public void DisconnectMachines(MachineBase from, int fromSlot, MachineBase to, int toSlot)
+        {
+            from.DisconnectFrom(fromSlot, to, toSlot);
+            this.DisconnectMachines(from, to);
 
             this.Recalculate();
         }

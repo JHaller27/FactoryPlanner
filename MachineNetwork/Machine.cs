@@ -26,6 +26,28 @@ namespace MachineNetwork
             input.SetNeighbor(null);
         }
 
+        public IEnumerable<MachineBase> DisconnectAllOutputs()
+        {
+            for (int i = 0; i < this.CountOutputs(); i++)
+            {
+                if (!this.TryGetOutputSlot(i, out IThroughput output)) continue;
+
+                output.SetNeighbor(null);
+                yield return output.GetParent();
+            }
+        }
+
+        public IEnumerable<MachineBase> DisconnectAllInputs()
+        {
+            for (int i = 0; i < this.CountOutputs(); i++)
+            {
+                if (!this.TryGetOutputSlot(i, out IThroughput output)) continue;
+
+                output.SetNeighbor(null);
+                yield return output.GetParent();
+            }
+        }
+
         public IEnumerable<MachineBase> GetOutputDestinations()
         {
             for (int i = 0; i < this.CountOutputs(); i++)

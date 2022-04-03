@@ -161,6 +161,11 @@ public class GraphEdit : Godot.GraphEdit
         this.UpdateAllMachines();
     }
 
+    private void _on_GraphEdit_delete_nodes_request()
+    {
+        Network.Instance.RemoveMachine(this.Selected.GetMachineModel());
+    }
+
     private void _on_GraphEdit_node_selected(MachineNode node)
     {
         this.Selected = node;
