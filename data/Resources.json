@@ -65,7 +65,7 @@
       "Outputs": [
         {
           "Resource": "Iron Ore",
-          "Rate": 6000
+          "Rate": 60
         }
       ]
     },
@@ -76,7 +76,7 @@
       "Outputs": [
         {
           "Resource": "Copper Ore",
-          "Rate": 6000
+          "Rate": 60
         }
       ]
     },
@@ -87,7 +87,7 @@
       "Outputs": [
         {
           "Resource": "Limestone",
-          "Rate": 6000
+          "Rate": 60
         }
       ]
     },
@@ -98,13 +98,13 @@
       "Inputs": [
         {
           "Resource": "Iron Ore",
-          "Rate": 3000
+          "Rate": 30
         }
       ],
       "Outputs": [
         {
           "Resource": "Iron Ingot",
-          "Rate": 3000
+          "Rate": 30
         }
       ]
     },
@@ -115,13 +115,13 @@
       "Inputs": [
         {
           "Resource": "Copper Ore",
-          "Rate": 3000
+          "Rate": 30
         }
       ],
       "Outputs": [
         {
           "Resource": "Copper Ingot",
-          "Rate": 3000
+          "Rate": 30
         }
       ]
     },
@@ -132,13 +132,13 @@
       "Inputs": [
         {
           "Resource": "Iron Ingot",
-          "Rate": 3000
+          "Rate": 30
         }
       ],
       "Outputs": [
         {
           "Resource": "Iron Plate",
-          "Rate": 2000
+          "Rate": 20
         }
       ]
     },
@@ -149,13 +149,13 @@
       "Inputs": [
         {
           "Resource": "Copper Ingot",
-          "Rate": 1500
+          "Rate": 15
         }
       ],
       "Outputs": [
         {
           "Resource": "Wire",
-          "Rate": 3000
+          "Rate": 30
         }
       ]
     },
@@ -166,13 +166,13 @@
       "Inputs": [
         {
           "Resource": "Copper Ingot",
-          "Rate": 2000
+          "Rate": 20
         }
       ],
       "Outputs": [
         {
           "Resource": "Copper Sheet",
-          "Rate": 1000
+          "Rate": 10
         }
       ]
     },
@@ -183,13 +183,13 @@
       "Inputs": [
         {
           "Resource": "Iron Ingot",
-          "Rate": 1500
+          "Rate": 15
         }
       ],
       "Outputs": [
         {
           "Resource": "Iron Rod",
-          "Rate": 1500
+          "Rate": 15
         }
       ]
     },
@@ -200,13 +200,13 @@
       "Inputs": [
         {
           "Resource": "Limestone",
-          "Rate": 1500
+          "Rate": 15
         }
       ],
       "Outputs": [
         {
           "Resource": "Concrete",
-          "Rate": 4500
+          "Rate": 45
         }
       ]
     },
@@ -217,13 +217,13 @@
       "Inputs": [
         {
           "Resource": "Iron Rod",
-          "Rate": 1000
+          "Rate": 10
         }
       ],
       "Outputs": [
         {
           "Resource": "Screw",
-          "Rate": 4000
+          "Rate": 40
         }
       ]
     },
@@ -234,17 +234,17 @@
       "Inputs": [
         {
           "Resource": "Screw",
-          "Rate": 2500
+          "Rate": 25
         },
         {
           "Resource": "Iron Rod",
-          "Rate": 500
+          "Rate": 5
         }
       ],
       "Outputs": [
         {
           "Resource": "Rotor",
-          "Rate": 400
+          "Rate": 4
         }
       ]
     },
@@ -255,17 +255,17 @@
       "Inputs": [
         {
           "Resource": "Screw",
-          "Rate": 6000
+          "Rate": 60
         },
         {
           "Resource": "Iron Plate",
-          "Rate": 3000
+          "Rate": 30
         }
       ],
       "Outputs": [
         {
           "Resource": "Reinforced Iron Plate",
-          "Rate": 500
+          "Rate": 5
         }
       ]
     }

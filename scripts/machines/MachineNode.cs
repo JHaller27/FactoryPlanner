@@ -140,7 +140,7 @@ namespace FactoryPlanner.scripts.machines
         public override void UpdateSlots()
         {
             base.UpdateSlots();
-            this.EfficiencySlider.Value = (int)this.MachineModel.GetEfficiencyPercentage();
+            this.EfficiencySlider.Value = (float)this.MachineModel.Efficiency * 100;
         }
 
         protected static void AddEnumItems(OptionButton optionButton, Type enumType, int defaultIdx = 0)

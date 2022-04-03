@@ -8,7 +8,6 @@ namespace MachineNetwork
         private static MachineNetwork _instance = null;
         public static MachineNetwork Instance => _instance ?? (_instance = new MachineNetwork());
 
-        public static uint Precision { get; set;  }
         private Dictionary<int, MachineBase> RandomAccessList { get; } = new();
         private Dictionary<MachineBase, int> ReverseRandomAccessList { get; } = new();
 

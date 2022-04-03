@@ -81,9 +81,7 @@ namespace MachineNetwork
         private IList<IEfficientThroughput> Outputs { get; } = new List<IEfficientThroughput>();
         public override int CountOutputs() => this.Outputs.Count;
 
-        private uint Efficiency { get; set; }
-        public decimal GetEfficiencyPercentage() => (decimal)this.Efficiency / 100;
-        private decimal EfficiencyMult() => (decimal)this.Efficiency / (100 * MachineNetwork.Precision);
+        public decimal Efficiency { get; private set; }
 
         public EfficientMachine(int numInputs, int numOutputs, string defaultResourceId)
         {
@@ -136,7 +134,7 @@ namespace MachineNetwork
             // Determine my new efficiency based on my inputs
             if (!this.HasInputSlots())
             {
-                this.Efficiency = 100 * MachineNetwork.Precision;
+                this.Efficiency = 1;
             }
             else if (this.HasDisconnectedInputs())
             {
@@ -154,7 +152,7 @@ namespace MachineNetwork
             // Update my outputs' flows with my new efficiency
             foreach (IEfficientThroughput output in this.Outputs)
             {
-                bool canHandle = output.SetEfficiency(this.EfficiencyMult());
+                bool canHandle = output.SetEfficiency(this.Efficiency);
                 if (canHandle) continue;
 
                 this.ReverseUpdate();
@@ -174,7 +172,7 @@ namespace MachineNetwork
 
             foreach (IEfficientThroughput input in this.Inputs)
             {
-                input.SetEfficiency(this.EfficiencyMult());
+                input.SetEfficiency(this.Efficiency);
             }
 
             foreach (MachineBase inputMachine in this.InputMachines())
@@ -183,19 +181,19 @@ namespace MachineNetwork
             }
         }
 
-        public void SetInputRecipe(int idx, string resourceId, uint capacity)
+        public void SetInputRecipe(int idx, string resourceId, decimal capacity)
         {
             this.Inputs[idx].SetRecipe(capacity, resourceId);
         }
 
-        public void SetOutputRecipe(int idx, string resourceId, uint capacity)
+        public void SetOutputRecipe(int idx, string resourceId, decimal capacity)
         {
             this.Outputs[idx].SetRecipe(capacity, resourceId);
         }
 
         public override string ToString()
         {
-            return string.Join(", ", this.Inputs.Select(i => i.ToString())) + $":{this.GetEfficiencyPercentage():0.##}%:" + string.Join(", ", this.Outputs.Select(o => o.ToString()));
+            return string.Join(", ", this.Inputs.Select(i => i.ToString())) + $":{this.Efficiency * 100:0.##}%:" + string.Join(", ", this.Outputs.Select(o => o.ToString()));
         }
     }
 
@@ -279,9 +277,9 @@ namespace MachineNetwork
         public override bool Update()
         {
             // Get new output flow based on total input flow & number of connected neighbors
-            uint totalInputFlow = this.Inputs.Aggregate<PassthroughThroughput, uint>(0, (current, input) => current + input.FlowRate);
+            decimal totalInputFlow = this.Inputs.Aggregate<PassthroughThroughput, decimal>(0, (current, input) => current + input.FlowRate);
             bool hasNoConnectedOutput = this.CountConnectedOutputs() == 0;
-            uint eachOutputFlow = hasNoConnectedOutput ? totalInputFlow : (uint)(totalInputFlow / this.CountConnectedOutputs());
+            decimal eachOutputFlow = hasNoConnectedOutput ? totalInputFlow : totalInputFlow / this.CountConnectedOutputs();
 
             // Update my outputs' flows
             bool first = true;
@@ -293,7 +291,7 @@ namespace MachineNetwork
                 }
                 else if (output.HasNeighbor())
                 {
-                    uint newFlow = output.Neighbor.SetFlow(eachOutputFlow);
+                    decimal newFlow = output.Neighbor.SetFlow(eachOutputFlow);
                     // We can ignore the output (new flow) since our own outputs will always be able to handle anything we give them
                     _ = output.SetFlow(newFlow);
 
@@ -319,7 +317,7 @@ namespace MachineNetwork
         {
             // To get here, this must have been called by an output-neighbor
             // Thus, we are guaranteed to have output-neighbors which already have an up-to-date efficiency
-            uint totalOutputFlow = this.Outputs.Select(o => o.FlowRate).Aggregate((curr, acc) => curr + acc);
+            decimal totalOutputFlow = this.Outputs.Select(o => o.FlowRate).Aggregate((curr, acc) => curr + acc);
 
             // First, try to redistribute outputs
             List<PassthroughThroughput> outputsWithCapacity = this.Outputs
@@ -327,15 +325,15 @@ namespace MachineNetwork
                 .ToList();
 
             // If we have outputs that can handle more capacity, update them to do so
-            uint totalInputFlow = this.Inputs.Select(i => i.FlowRate).Aggregate((curr, acc) => curr + acc);
-            uint remainingOutputFlow = totalInputFlow - totalOutputFlow;
+            decimal totalInputFlow = this.Inputs.Select(i => i.FlowRate).Aggregate((curr, acc) => curr + acc);
+            decimal remainingOutputFlow = totalInputFlow - totalOutputFlow;
             foreach (PassthroughThroughput output in outputsWithCapacity)
             {
-                uint oldFlow = output.FlowRate;
-                uint newFlow = output.SetFlow(remainingOutputFlow);
+                decimal oldFlow = output.FlowRate;
+                decimal newFlow = output.SetFlow(remainingOutputFlow);
                 output.Neighbor.SetFlow(newFlow);
 
-                uint flowDelta = oldFlow - newFlow;
+                decimal flowDelta = oldFlow - newFlow;
                 remainingOutputFlow -= flowDelta;
             }
 
@@ -346,10 +344,10 @@ namespace MachineNetwork
             }
 
             // If no outputs can handle more capacity, reverse-update inputs
-            uint eachInputFlow = (uint)(totalOutputFlow / this.CountConnectedInputs());
+            decimal eachInputFlow = totalOutputFlow / this.CountConnectedInputs();
             foreach (PassthroughThroughput input in this.Inputs.Where(i => i.HasNeighbor()))
             {
-                uint newFlow = input.SetFlow(eachInputFlow);
+                decimal newFlow = input.SetFlow(eachInputFlow);
                 input.Neighbor.SetFlow(newFlow);
             }
 

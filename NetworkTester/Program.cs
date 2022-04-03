@@ -10,18 +10,16 @@ namespace NetworkTester
     {
         static void Main(string[] args)
         {
-            MachineNetwork.MachineNetwork.Precision = 100;
-
             EfficientMachine m1 = new(0, 1, "Any");
-            UpdateRecipe(m1, null, new() { [0] = 12000 });
+            UpdateRecipe(m1, null, new() { [0] = 120 });
             Network.Instance.AddMachine(m1);
 
             EfficientMachine m2 = new(1, 1, "Any");
-            UpdateRecipe(m2, new() { [0] = 3000 }, new() { [0] = 3000 });
+            UpdateRecipe(m2, new() { [0] = 30 }, new() { [0] = 30 });
             Network.Instance.AddMachine(m2);
 
             EfficientMachine m3 = new(1, 1, "Any");
-            UpdateRecipe(m3, new() { [0] = 3000 }, new() { [0] = 3000 });
+            UpdateRecipe(m3, new() { [0] = 30 }, new() { [0] = 30 });
             Network.Instance.AddMachine(m3);
 
             Balancer balancer = new(3, 3, "Any");

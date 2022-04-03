@@ -11,7 +11,7 @@ namespace MachineNetwork
 
         void SetNeighbor(IThroughput neighbor);
         bool HasNeighbor();
-        uint SetFlow(uint flow);
+        decimal SetFlow(decimal flow);
         string RateString();
         bool IsAtCapacity();
     }
@@ -19,16 +19,16 @@ namespace MachineNetwork
     public interface IEfficientThroughput : IThroughput
     {
         bool SetEfficiency(decimal efficiencyMult);
-        uint Efficiency();
-        void SetRecipe(uint capacity, string resourceId);
+        decimal Efficiency();
+        void SetRecipe(decimal capacity, string resourceId);
     }
 
     public abstract class EfficientThroughputBase : IEfficientThroughput
     {
         private readonly MachineBase Parent1;
-        private uint Flow { get; set; }
-        private uint Capacity { get; set; }
-        public uint Efficiency() => this.Capacity == 0 ? 100 * MachineNetwork.Precision : this.Flow * 100 * MachineNetwork.Precision / this.Capacity;
+        private decimal Flow { get; set; }
+        private decimal Capacity { get; set; }
+        public decimal Efficiency() => this.Capacity == 0 ? 1 : this.Flow / this.Capacity;
         public string ResourceId { get; private set; }
         public IThroughput Neighbor { get; private set; }
 
@@ -52,25 +52,30 @@ namespace MachineNetwork
 
         public bool SetEfficiency(decimal efficiencyMult)
         {
-            uint newFlow = (uint)(this.Capacity * efficiencyMult);
+            decimal newFlow = Math.Round(this.Capacity * efficiencyMult, 2);
+            if (newFlow == (uint)newFlow)
+            {
+                newFlow = (uint)newFlow;
+            }
+
             this.Flow = newFlow;
 
             if (this.Neighbor == null) return true;
 
-            uint neighborNewFlow = this.Neighbor.SetFlow(this.Flow);
+            decimal neighborNewFlow = this.Neighbor.SetFlow(this.Flow);
             bool canHandle = neighborNewFlow == this.Flow;
             this.Flow = neighborNewFlow;
 
             return canHandle;
         }
 
-        public uint SetFlow(uint flow)
+        public decimal SetFlow(decimal flow)
         {
             this.Flow = Math.Min(this.Capacity, flow);
             return this.Flow;
         }
 
-        public void SetRecipe(uint capacity, string resourceId)
+        public void SetRecipe(decimal capacity, string resourceId)
         {
             this.Capacity = capacity;
             this.ResourceId = resourceId;
@@ -78,7 +83,7 @@ namespace MachineNetwork
 
         public string RateString()
         {
-            return $"{this.Flow / Network.Precision:0.##} / {this.Capacity / Network.Precision:0.##}";
+            return $"{this.Flow:0.##} / {this.Capacity:0.##}";
         }
 
         public bool IsAtCapacity()
@@ -88,7 +93,7 @@ namespace MachineNetwork
 
         public override string ToString()
         {
-            return $"({this.Flow / MachineNetwork.Precision}/{this.Capacity / MachineNetwork.Precision})";
+            return $"({this.Flow}/{this.Capacity})";
         }
     }
 
@@ -128,7 +133,7 @@ namespace MachineNetwork
             return Parent;
         }
 
-        public uint FlowRate { get; set; }
+        public decimal FlowRate { get; set; }
 
         public PassthroughThroughput(Balancer parent, string resourceId)
         {
@@ -144,14 +149,14 @@ namespace MachineNetwork
 
         public bool HasNeighbor() => this.Neighbor != null;
 
-        public uint SetFlow(uint flow)
+        public decimal SetFlow(decimal flow)
         {
             return this.FlowRate = flow;
         }
 
         public string RateString()
         {
-            return $"{this.FlowRate / Network.Precision:0.##}";
+            return $"{this.FlowRate:0.##}";
         }
 
         public bool IsAtCapacity()

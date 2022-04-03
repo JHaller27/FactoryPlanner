@@ -25,8 +25,6 @@ public class GraphEdit : Godot.GraphEdit
     // Called when the node enters the scene tree for the first time.
     public override void _Ready()
     {
-        MachineNetwork.MachineNetwork.Precision = 100;
-
         // One-time load resources
         Reader.LoadData("res://data/Resources.json");
 
