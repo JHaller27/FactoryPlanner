@@ -141,6 +141,10 @@ namespace MachineNetwork
             else if (this.HasDisconnectedInputs())
             {
                 this.Efficiency = 0;
+                foreach (IEfficientThroughput input in this.Inputs.Where(i => !i.HasNeighbor()))
+                {
+                    input.SetEfficiency(0);
+                }
             }
             else
             {
