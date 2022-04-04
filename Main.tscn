@@ -29,21 +29,21 @@ margin_right = 156.756
 margin_bottom = -38.1978
 
 [node name="Button" type="Button" parent="HBoxContainer"]
-margin_right = 24.0
+margin_right = 54.0
 margin_bottom = 32.0
-text = "M"
+text = "Miner"
 
 [node name="Button2" type="Button" parent="HBoxContainer"]
-margin_left = 28.0
-margin_right = 52.0
+margin_left = 58.0
+margin_right = 126.0
 margin_bottom = 32.0
-text = "M"
+text = "Smelter"
 
 [node name="Button3" type="Button" parent="HBoxContainer"]
-margin_left = 56.0
-margin_right = 80.0
+margin_left = 130.0
+margin_right = 225.0
 margin_bottom = 32.0
-text = "M"
+text = "Constructor"
 
 [connection signal="connection_request" from="GraphEdit" to="GraphEdit" method="_on_GraphEdit_connection_request"]
 [connection signal="delete_nodes_request" from="GraphEdit" to="GraphEdit" method="_on_GraphEdit_delete_nodes_request"]
