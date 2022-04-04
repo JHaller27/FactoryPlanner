@@ -11,16 +11,14 @@ public class GraphEdit : Godot.GraphEdit
 {
 	private static readonly IDictionary<uint, string> KeyMachinePathMap = new Godot.Collections.Dictionary<uint, string>
 	{
-		[(int)KeyList.Key1] = "res://Miner.tscn",
-		[(int)KeyList.Key2] = "res://Smelter.tscn",
-		[(int)KeyList.Key3] = "res://Constructor.tscn",
-		[(int)KeyList.Key4] = "res://Assembler.tscn",
-		[(int)KeyList.Key5] = "res://Balancer.tscn",
+		[(int)KeyList.Key1] = "res://scenes/machines/Miner.tscn",
+		[(int)KeyList.Key2] = "res://scenes/machines/Smelter.tscn",
+		[(int)KeyList.Key3] = "res://scenes/machines/Constructor.tscn",
+		[(int)KeyList.Key4] = "res://scenes/machines/Assembler.tscn",
+		[(int)KeyList.Key5] = "res://scenes/machines/Balancer.tscn",
 	};
 
 	private MachineNode Selected { get; set; }
-	private bool CtrlHeld { get; set; }
-	private bool JustDuped { get; set; }
 
 	// Called when the node enters the scene tree for the first time.
 	public override void _Ready()
@@ -54,30 +52,12 @@ public class GraphEdit : Godot.GraphEdit
 
 			this.AddMachine(graphNode);
 		}
-		else if (eventKey.Scancode == (int)KeyList.Control)
+		else if (inputEvent.IsActionPressed(KnownInputActions.Duplicate))
 		{
-			this.CtrlHeld = eventKey.Pressed;
-			if (!this.CtrlHeld)
-			{
-				this.JustDuped = false;
-			}
-		}
-		else if (eventKey.Scancode == (int)KeyList.D && this.CtrlHeld)
-		{
-			if (this.Selected == null)
-			{
-			}
-			else if (eventKey.Pressed && !this.JustDuped)
-			{
-				this.JustDuped = true;
+			if (this.Selected == null) return;
 
-				MachineNode dupe = (MachineNode)this.Selected.Duplicate();
-				this.AddMachine(dupe);
-			}
-			else
-			{
-				this.JustDuped = false;
-			}
+			MachineNode dupe = (MachineNode)this.Selected.Duplicate();
+			this.AddMachine(dupe);
 		}
 	}
 
