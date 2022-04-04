@@ -7,7 +7,6 @@
 anchor_right = 1.0
 anchor_bottom = 1.0
 __meta__ = {
-"_edit_lock_": true,
 "_edit_use_anchors_": false
 }
 
@@ -15,30 +14,23 @@ __meta__ = {
 anchor_right = 1.0
 anchor_bottom = 1.0
 right_disconnects = true
+scroll_offset = Vector2( -800, -400 )
+show_zoom_label = true
+minimap_enabled = false
 script = ExtResource( 1 )
-__meta__ = {
-"_edit_lock_": true,
-"_edit_use_anchors_": true
-}
 
 [node name="HBoxContainer" type="HBoxContainer" parent="."]
 anchor_top = 1.0
 anchor_bottom = 1.0
-margin_left = 33.674
-margin_top = -61.2181
-margin_right = 137.674
-margin_bottom = -29.2181
-__meta__ = {
-"_edit_use_anchors_": false
-}
+margin_left = 52.7558
+margin_top = -70.1978
+margin_right = 156.756
+margin_bottom = -38.1978
 
 [node name="TextureRect" type="TextureRect" parent="HBoxContainer"]
 margin_right = 32.0
 margin_bottom = 32.0
 texture = ExtResource( 2 )
-__meta__ = {
-"_edit_lock_": true
-}
 
 [node name="TextureRect2" type="TextureRect" parent="HBoxContainer"]
 margin_left = 36.0
@@ -46,7 +38,6 @@ margin_right = 68.0
 margin_bottom = 32.0
 texture = ExtResource( 2 )
 __meta__ = {
-"_edit_lock_": true,
 "_edit_use_anchors_": false
 }
 
@@ -56,7 +47,6 @@ margin_right = 104.0
 margin_bottom = 32.0
 texture = ExtResource( 2 )
 __meta__ = {
-"_edit_lock_": true,
 "_edit_use_anchors_": false
 }
 

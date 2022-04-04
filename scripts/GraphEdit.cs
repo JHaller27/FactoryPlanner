@@ -9,168 +9,168 @@ using Network = MachineNetwork.MachineNetwork;
 
 public class GraphEdit : Godot.GraphEdit
 {
-    private static readonly IDictionary<uint, string> KeyMachinePathMap = new Godot.Collections.Dictionary<uint, string>
-    {
-        [(int)KeyList.Key1] = "res://Miner.tscn",
-        [(int)KeyList.Key2] = "res://Smelter.tscn",
-        [(int)KeyList.Key3] = "res://Constructor.tscn",
-        [(int)KeyList.Key4] = "res://Assembler.tscn",
-        [(int)KeyList.Key5] = "res://Balancer.tscn",
-    };
+	private static readonly IDictionary<uint, string> KeyMachinePathMap = new Godot.Collections.Dictionary<uint, string>
+	{
+		[(int)KeyList.Key1] = "res://Miner.tscn",
+		[(int)KeyList.Key2] = "res://Smelter.tscn",
+		[(int)KeyList.Key3] = "res://Constructor.tscn",
+		[(int)KeyList.Key4] = "res://Assembler.tscn",
+		[(int)KeyList.Key5] = "res://Balancer.tscn",
+	};
 
-    private MachineNode Selected { get; set; }
-    private bool CtrlHeld { get; set; }
-    private bool JustDuped { get; set; }
+	private MachineNode Selected { get; set; }
+	private bool CtrlHeld { get; set; }
+	private bool JustDuped { get; set; }
 
-    // Called when the node enters the scene tree for the first time.
-    public override void _Ready()
-    {
-        // One-time load resources
-        Reader.LoadData("res://data/Resources.json");
+	// Called when the node enters the scene tree for the first time.
+	public override void _Ready()
+	{
+		// One-time load resources
+		Reader.LoadData("res://data/Resources.json");
 
-        // Set valid resources
-        foreach (Resource resource in Resource.Resources.Values)
-        {
-            // "Any" is always a valid resource
-            if (resource != Resource.Any)
-            {
-                this.AddValidConnectionType(Resource.Any.TypeId, resource.TypeId);
-                this.AddValidConnectionType(resource.TypeId, Resource.Any.TypeId);
-            }
+		// Set valid resources
+		foreach (Resource resource in Resource.Resources.Values)
+		{
+			// "Any" is always a valid resource
+			if (resource != Resource.Any)
+			{
+				this.AddValidConnectionType(Resource.Any.TypeId, resource.TypeId);
+				this.AddValidConnectionType(resource.TypeId, Resource.Any.TypeId);
+			}
 
-            // A Resource can always match itself
-            this.AddValidConnectionType(resource.TypeId, resource.TypeId);
-        }
-    }
+			// A Resource can always match itself
+			this.AddValidConnectionType(resource.TypeId, resource.TypeId);
+		}
+	}
 
-    public override void _Input(InputEvent inputEvent)
-    {
-        if (!(inputEvent is InputEventKey eventKey)) return;
+	public override void _Input(InputEvent inputEvent)
+	{
+		if (!(inputEvent is InputEventKey eventKey)) return;
 
-        if (KeyMachinePathMap.TryGetValue(eventKey.Scancode, out string path) && eventKey.Pressed)
-        {
-            PackedScene graphScene = ResourceLoader.Load<PackedScene>(path);
-            MachineNode graphNode = (MachineNode)graphScene.Instance();
+		if (KeyMachinePathMap.TryGetValue(eventKey.Scancode, out string path) && eventKey.Pressed)
+		{
+			PackedScene graphScene = ResourceLoader.Load<PackedScene>(path);
+			MachineNode graphNode = (MachineNode)graphScene.Instance();
 
-            this.AddMachine(graphNode);
-        }
-        else if (eventKey.Scancode == (int)KeyList.Control)
-        {
-            this.CtrlHeld = eventKey.Pressed;
-            if (!this.CtrlHeld)
-            {
-                this.JustDuped = false;
-            }
-        }
-        else if (eventKey.Scancode == (int)KeyList.D && this.CtrlHeld)
-        {
-            if (this.Selected == null)
-            {
-            }
-            else if (eventKey.Pressed && !this.JustDuped)
-            {
-                this.JustDuped = true;
+			this.AddMachine(graphNode);
+		}
+		else if (eventKey.Scancode == (int)KeyList.Control)
+		{
+			this.CtrlHeld = eventKey.Pressed;
+			if (!this.CtrlHeld)
+			{
+				this.JustDuped = false;
+			}
+		}
+		else if (eventKey.Scancode == (int)KeyList.D && this.CtrlHeld)
+		{
+			if (this.Selected == null)
+			{
+			}
+			else if (eventKey.Pressed && !this.JustDuped)
+			{
+				this.JustDuped = true;
 
-                MachineNode dupe = (MachineNode)this.Selected.Duplicate();
-                this.AddMachine(dupe);
-            }
-            else
-            {
-                this.JustDuped = false;
-            }
-        }
-    }
+				MachineNode dupe = (MachineNode)this.Selected.Duplicate();
+				this.AddMachine(dupe);
+			}
+			else
+			{
+				this.JustDuped = false;
+			}
+		}
+	}
 
-    private void AddMachine(MachineNode node)
-    {
-        this.AddChild(node);
-        Network.Instance.AddMachine(node.GetMachineModel());
-        node.UpdateSlots();
+	private void AddMachine(MachineNode node)
+	{
+		this.AddChild(node);
+		Network.Instance.AddMachine(node.GetMachineModel());
+		node.UpdateSlots();
 
-        Vector2 mousePosition = GetGlobalMousePosition();
-        node.Offset = mousePosition + this.ScrollOffset;
+		Vector2 mousePosition = GetGlobalMousePosition();
+		node.Offset = mousePosition + this.ScrollOffset;
 
-        this.SetSelected(node);
-    }
+		this.SetSelected(node);
+	}
 
-    private void _on_GraphEdit_connection_request(string fromName, int fromSlot, string toName, int toSlot)
-    {
-        MachineNode fromNode = this.GetNode<MachineNode>(fromName);
-        MachineNode toNode = this.GetNode<MachineNode>(toName);
+	private void _on_GraphEdit_connection_request(string fromName, int fromSlot, string toName, int toSlot)
+	{
+		MachineNode fromNode = this.GetNode<MachineNode>(fromName);
+		MachineNode toNode = this.GetNode<MachineNode>(toName);
 
-        if (this.IsValidConnectionType(fromNode.GetSlotTypeRight(fromSlot+1), toNode.GetSlotTypeLeft(toSlot+1)) &&
-            !this.HasInput(toName, toSlot) && !this.HasOutput(fromName, fromSlot))
-        {
-            this.ConnectNode(fromName, fromSlot, toName, toSlot);
-            Network.Instance.ConnectMachines(fromNode.GetMachineModel(), fromSlot, toNode.GetMachineModel(), toSlot);
+		if (this.IsValidConnectionType(fromNode.GetSlotTypeRight(fromSlot+1), toNode.GetSlotTypeLeft(toSlot+1)) &&
+			!this.HasInput(toName, toSlot) && !this.HasOutput(fromName, fromSlot))
+		{
+			this.ConnectNode(fromName, fromSlot, toName, toSlot);
+			Network.Instance.ConnectMachines(fromNode.GetMachineModel(), fromSlot, toNode.GetMachineModel(), toSlot);
 
-            this.UpdateAllMachines();
-        }
-    }
+			this.UpdateAllMachines();
+		}
+	}
 
-    private void UpdateAllMachines()
-    {
-        Console.WriteLine("====================");
-        Console.WriteLine(Network.Instance);
+	private void UpdateAllMachines()
+	{
+		Console.WriteLine("====================");
+		Console.WriteLine(Network.Instance);
 
-        foreach (object obj in this.GetChildren())
-        {
-            if (obj is MachineNode machineNode)
-            {
-                machineNode.UpdateSlots();
-            }
-        }
-    }
+		foreach (object obj in this.GetChildren())
+		{
+			if (obj is MachineNode machineNode)
+			{
+				machineNode.UpdateSlots();
+			}
+		}
+	}
 
-    private bool HasInput(string toName, int toSlot)
-    {
-        foreach (Dictionary x in this.GetConnectionList())
-        {
-            string checkName = (string)x["to"];
-            int checkSlot = (int)x["to_port"];
+	private bool HasInput(string toName, int toSlot)
+	{
+		foreach (Dictionary x in this.GetConnectionList())
+		{
+			string checkName = (string)x["to"];
+			int checkSlot = (int)x["to_port"];
 
-            if (checkName == toName && checkSlot == toSlot) return true;
-        }
+			if (checkName == toName && checkSlot == toSlot) return true;
+		}
 
-        return false;
-    }
+		return false;
+	}
 
-    private bool HasOutput(string fromName, int fromSlot)
-    {
-        foreach (Dictionary x in this.GetConnectionList())
-        {
-            string checkName = (string)x["from"];
-            int checkSlot = (int)x["from_port"];
+	private bool HasOutput(string fromName, int fromSlot)
+	{
+		foreach (Dictionary x in this.GetConnectionList())
+		{
+			string checkName = (string)x["from"];
+			int checkSlot = (int)x["from_port"];
 
-            if (checkName == fromName && checkSlot == fromSlot) return true;
-        }
+			if (checkName == fromName && checkSlot == fromSlot) return true;
+		}
 
-        return false;
-    }
+		return false;
+	}
 
-    private void _on_GraphEdit_disconnection_request(string fromName, int fromSlot, string toName, int toSlot)
-    {
-        MachineNode fromNode = this.GetNode<MachineNode>(fromName);
-        MachineNode toNode = this.GetNode<MachineNode>(toName);
+	private void _on_GraphEdit_disconnection_request(string fromName, int fromSlot, string toName, int toSlot)
+	{
+		MachineNode fromNode = this.GetNode<MachineNode>(fromName);
+		MachineNode toNode = this.GetNode<MachineNode>(toName);
 
-        this.DisconnectNode(fromName, fromSlot, toName, toSlot);
-        Network.Instance.DisconnectMachines(fromNode.GetMachineModel(), fromSlot, toNode.GetMachineModel(), toSlot);
+		this.DisconnectNode(fromName, fromSlot, toName, toSlot);
+		Network.Instance.DisconnectMachines(fromNode.GetMachineModel(), fromSlot, toNode.GetMachineModel(), toSlot);
 
-        this.UpdateAllMachines();
-    }
+		this.UpdateAllMachines();
+	}
 
-    private void _on_GraphEdit_delete_nodes_request()
-    {
-        Network.Instance.RemoveMachine(this.Selected.GetMachineModel());
-    }
+	private void _on_GraphEdit_delete_nodes_request()
+	{
+		Network.Instance.RemoveMachine(this.Selected.GetMachineModel());
+	}
 
-    private void _on_GraphEdit_node_selected(MachineNode node)
-    {
-        this.Selected = node;
-    }
+	private void _on_GraphEdit_node_selected(MachineNode node)
+	{
+		this.Selected = node;
+	}
 
-    private void _on_GraphEdit_node_unselected(object node)
-    {
-        this.Selected = null;
-    }
+	private void _on_GraphEdit_node_unselected(object node)
+	{
+		this.Selected = null;
+	}
 }

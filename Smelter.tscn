@@ -4,7 +4,7 @@
 
 [node name="GraphNode" type="GraphNode"]
 margin_right = 260.0
-margin_bottom = 88.0
+margin_bottom = 100.0
 title = "Smelter"
 show_close = true
 slot/0/left_enabled = false
