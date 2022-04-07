@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using FactoryPlanner.DataReader;
 using Godot;
 using FactoryPlanner.scripts.machines;
@@ -9,15 +8,6 @@ using Network = MachineNetwork.MachineNetwork;
 
 public class GraphEdit : Godot.GraphEdit
 {
-	private static readonly IDictionary<uint, string> KeyMachinePathMap = new Godot.Collections.Dictionary<uint, string>
-	{
-		[(int)KeyList.Key1] = "res://scenes/machines/Miner.tscn",
-		[(int)KeyList.Key2] = "res://scenes/machines/Smelter.tscn",
-		[(int)KeyList.Key3] = "res://scenes/machines/Constructor.tscn",
-		[(int)KeyList.Key4] = "res://scenes/machines/Assembler.tscn",
-		[(int)KeyList.Key5] = "res://scenes/machines/Balancer.tscn",
-	};
-
 	private MachineNode Selected { get; set; }
 
 	// Called when the node enters the scene tree for the first time.
@@ -41,36 +31,24 @@ public class GraphEdit : Godot.GraphEdit
 		}
 	}
 
-	public override void _Input(InputEvent inputEvent)
-	{
-		if (!(inputEvent is InputEventKey eventKey)) return;
-
-		if (KeyMachinePathMap.TryGetValue(eventKey.Scancode, out string path) && eventKey.Pressed)
-		{
-			PackedScene graphScene = ResourceLoader.Load<PackedScene>(path);
-			MachineNode graphNode = (MachineNode)graphScene.Instance();
-
-			this.AddMachine(graphNode);
-		}
-		else if (inputEvent.IsActionPressed(KnownInputActions.Duplicate))
-		{
-			if (this.Selected == null) return;
-
-			MachineNode dupe = (MachineNode)this.Selected.Duplicate();
-			this.AddMachine(dupe);
-		}
-	}
-
-	private void AddMachine(MachineNode node)
+	public void AddMachineAt(MachineNode node, Vector2 position)
 	{
 		this.AddChild(node);
 		Network.Instance.AddMachine(node.GetMachineModel());
 		node.UpdateSlots();
 
-		Vector2 mousePosition = GetGlobalMousePosition();
-		node.Offset = mousePosition + this.ScrollOffset;
+		node.Offset = position + this.ScrollOffset;
 
 		this.SetSelected(node);
+	}
+
+	public void DuplicateSelected()
+	{
+		if (this.Selected == null) return;
+
+		MachineNode dupe = (MachineNode)this.Selected.Duplicate();
+		Vector2 mousePosition = GetGlobalMousePosition();
+		this.AddMachineAt(dupe, mousePosition);
 	}
 
 	private void _on_GraphEdit_connection_request(string fromName, int fromSlot, string toName, int toSlot)

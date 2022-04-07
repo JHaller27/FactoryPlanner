@@ -1,12 +1,14 @@
-[gd_scene load_steps=3 format=2]
+[gd_scene load_steps=4 format=2]
 
 [ext_resource path="res://scripts/GraphEdit.cs" type="Script" id=1]
 [ext_resource path="res://assets/themes/Main.tres" type="Theme" id=2]
+[ext_resource path="res://scripts/Main.cs" type="Script" id=3]
 
 [node name="Main" type="Control"]
 anchor_right = 1.0
 anchor_bottom = 1.0
 theme = ExtResource( 2 )
+script = ExtResource( 3 )
 
 [node name="GraphEdit" type="GraphEdit" parent="."]
 anchor_right = 1.0
@@ -19,7 +21,7 @@ __meta__ = {
 "_edit_lock_": true
 }
 
-[node name="HBoxContainer" type="HBoxContainer" parent="."]
+[node name="Buttons" type="HBoxContainer" parent="."]
 anchor_top = 1.0
 anchor_bottom = 1.0
 margin_left = 52.7558
@@ -27,25 +29,42 @@ margin_top = -70.1978
 margin_right = 156.756
 margin_bottom = -38.1978
 
-[node name="Button" type="Button" parent="HBoxContainer"]
+[node name="MinerButton" type="Button" parent="Buttons"]
 margin_right = 54.0
 margin_bottom = 32.0
 text = "Miner"
 
-[node name="Button2" type="Button" parent="HBoxContainer"]
+[node name="SmelterButton" type="Button" parent="Buttons"]
 margin_left = 58.0
 margin_right = 126.0
 margin_bottom = 32.0
 text = "Smelter"
 
-[node name="Button3" type="Button" parent="HBoxContainer"]
+[node name="ConstructorButton" type="Button" parent="Buttons"]
 margin_left = 130.0
 margin_right = 225.0
 margin_bottom = 32.0
 text = "Constructor"
+
+[node name="AssemblerButton" type="Button" parent="Buttons"]
+margin_left = 229.0
+margin_right = 317.0
+margin_bottom = 32.0
+text = "Assembler"
+
+[node name="BalancerButton" type="Button" parent="Buttons"]
+margin_left = 321.0
+margin_right = 395.0
+margin_bottom = 32.0
+text = "Balancer"
 
 [connection signal="connection_request" from="GraphEdit" to="GraphEdit" method="_on_GraphEdit_connection_request"]
 [connection signal="delete_nodes_request" from="GraphEdit" to="GraphEdit" method="_on_GraphEdit_delete_nodes_request"]
 [connection signal="disconnection_request" from="GraphEdit" to="GraphEdit" method="_on_GraphEdit_disconnection_request"]
 [connection signal="node_selected" from="GraphEdit" to="GraphEdit" method="_on_GraphEdit_node_selected"]
 [connection signal="node_unselected" from="GraphEdit" to="GraphEdit" method="_on_GraphEdit_node_unselected"]
+[connection signal="pressed" from="Buttons/MinerButton" to="." method="AddMachine" binds= [ 0 ]]
+[connection signal="pressed" from="Buttons/SmelterButton" to="." method="AddMachine" binds= [ 1 ]]
+[connection signal="pressed" from="Buttons/ConstructorButton" to="." method="AddMachine" binds= [ 2 ]]
+[connection signal="pressed" from="Buttons/AssemblerButton" to="." method="AddMachine" binds= [ 3 ]]
+[connection signal="pressed" from="Buttons/BalancerButton" to="." method="AddMachine" binds= [ 4 ]]
