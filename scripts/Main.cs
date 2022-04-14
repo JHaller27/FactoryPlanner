@@ -1,6 +1,10 @@
+using System;
 using System.Collections.Generic;
+using System.Linq;
 using FactoryPlanner.scripts.machines;
 using Godot;
+using MachineNetwork;
+using Network = MachineNetwork.MachineNetwork;
 
 public class Main : Control
 {
@@ -11,6 +15,7 @@ public class Main : Control
 		ResourceLoader.Load<PackedScene>("res://scenes/machines/Constructor.tscn"),
 		ResourceLoader.Load<PackedScene>("res://scenes/machines/Assembler.tscn"),
 		ResourceLoader.Load<PackedScene>("res://scenes/machines/Balancer.tscn"),
+		ResourceLoader.Load<PackedScene>("res://scenes/machines/Output.tscn"),
 	};
 
 	private Container ButtonContainer { get; set; }
@@ -21,6 +26,8 @@ public class Main : Control
 	{
 		this.GraphEdit = this.GetNode<GraphEdit>("GraphEdit");
 		this.ButtonContainer = this.GetNode<Container>("Buttons");
+
+		this.Connect("MachinesUpdated", this, nameof(_on_Machines_Updated));
 	}
 
 	public override void _Input(InputEvent inputEvent)
@@ -56,5 +63,29 @@ public class Main : Control
 		MachineNode graphNode = graphScene.Instance<MachineNode>();
 
 		this.GraphEdit.AddMachineAt(graphNode, position);
+	}
+
+	private void _on_Machines_Updated()
+	{
+		IEnumerable<MachineNode> outputMachines = this.GraphEdit.GetChildren().Cast<MachineNode>()
+			.Where(m => m is OutputMachine);
+
+		Dictionary<string, int> outputs = new();
+		foreach (MachineNode outputMachine in outputMachines)
+		{
+			MachineBase model = outputMachine.GetMachineModel();
+			for (int i = 0; i < model.CountInputs(); i++)
+			{
+				model.TryGetInputSlot(i, out IThroughput input);
+				if (!outputs.ContainsKey(input.ResourceId)) outputs[input.ResourceId] = 0;
+				outputs[input.ResourceId]++;
+			}
+		}
+
+		Console.WriteLine("Outputs...");
+		foreach (KeyValuePair<string,int> kvp in outputs)
+		{
+			Console.WriteLine($"\t{kvp.Key} = {kvp.Value}");
+		}
 	}
 }

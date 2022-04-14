@@ -58,6 +58,12 @@ margin_right = 395.0
 margin_bottom = 32.0
 text = "Balancer"
 
+[node name="OutputButton" type="Button" parent="Buttons"]
+margin_left = 399.0
+margin_right = 461.0
+margin_bottom = 32.0
+text = "Output"
+
 [connection signal="connection_request" from="GraphEdit" to="GraphEdit" method="_on_GraphEdit_connection_request"]
 [connection signal="delete_nodes_request" from="GraphEdit" to="GraphEdit" method="_on_GraphEdit_delete_nodes_request"]
 [connection signal="disconnection_request" from="GraphEdit" to="GraphEdit" method="_on_GraphEdit_disconnection_request"]
@@ -68,3 +74,4 @@ text = "Balancer"
 [connection signal="pressed" from="Buttons/ConstructorButton" to="." method="AddMachine" binds= [ 2 ]]
 [connection signal="pressed" from="Buttons/AssemblerButton" to="." method="AddMachine" binds= [ 3 ]]
 [connection signal="pressed" from="Buttons/BalancerButton" to="." method="AddMachine" binds= [ 4 ]]
+[connection signal="pressed" from="Buttons/OutputButton" to="." method="AddMachine" binds= [ 5 ]]

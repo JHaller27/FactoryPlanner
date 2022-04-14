@@ -51,6 +51,10 @@ public class GraphEdit : Godot.GraphEdit
 		this.AddMachineAt(dupe, mousePosition);
 	}
 
+	[Signal]
+	public delegate void MachinesUpdated();
+
+	// ReSharper disable once UnusedMember.Local - Signal
 	private void _on_GraphEdit_connection_request(string fromName, int fromSlot, string toName, int toSlot)
 	{
 		MachineNode fromNode = this.GetNode<MachineNode>(fromName);
@@ -106,6 +110,7 @@ public class GraphEdit : Godot.GraphEdit
 		return false;
 	}
 
+	// ReSharper disable once UnusedMember.Local - Signal
 	private void _on_GraphEdit_disconnection_request(string fromName, int fromSlot, string toName, int toSlot)
 	{
 		MachineNode fromNode = this.GetNode<MachineNode>(fromName);
@@ -117,16 +122,19 @@ public class GraphEdit : Godot.GraphEdit
 		this.UpdateAllMachines();
 	}
 
+	// ReSharper disable once UnusedMember.Local - Signal
 	private void _on_GraphEdit_delete_nodes_request()
 	{
 		Network.Instance.RemoveMachine(this.Selected.GetMachineModel());
 	}
 
+	// ReSharper disable once UnusedMember.Local - Signal
 	private void _on_GraphEdit_node_selected(MachineNode node)
 	{
 		this.Selected = node;
 	}
 
+	// ReSharper disable once UnusedMember.Local - Signal
 	private void _on_GraphEdit_node_unselected(object node)
 	{
 		this.Selected = null;

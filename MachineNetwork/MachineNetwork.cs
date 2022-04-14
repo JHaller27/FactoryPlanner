@@ -5,8 +5,8 @@ namespace MachineNetwork
 {
     public class MachineNetwork
     {
-        private static MachineNetwork _instance = null;
-        public static MachineNetwork Instance => _instance ?? (_instance = new MachineNetwork());
+        private static MachineNetwork _instance;
+        public static MachineNetwork Instance => _instance ??= new();
 
         private Dictionary<int, MachineBase> RandomAccessList { get; } = new();
         private Dictionary<MachineBase, int> ReverseRandomAccessList { get; } = new();
@@ -51,6 +51,10 @@ namespace MachineNetwork
 
             this.Recalculate();
         }
+
+        public IEnumerable<MachineBase> GetMachines() => this.RandomAccessList.Values;
+        public IEnumerable<MachineBase> GetRoots() => this.Roots;
+        public IEnumerable<MachineBase> GetLeaves() => this.Leaves;
 
         private MachineBase GetMachine(int idx)
         {
