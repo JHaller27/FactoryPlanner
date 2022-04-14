@@ -160,7 +160,7 @@ namespace FactoryPlanner.scripts.machines
             optionButton.SetItemMetadata(optionButton.GetItemCount()-1, metaData);
         }
 
-        protected void _on_GraphNode_close_request()
+        protected new void _on_GraphNode_close_request()
         {
             this.QueueFree();
         }

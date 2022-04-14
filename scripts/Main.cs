@@ -13,11 +13,14 @@ public class Main : Control
 		ResourceLoader.Load<PackedScene>("res://scenes/machines/Balancer.tscn"),
 	};
 
+	private Container ButtonContainer { get; set; }
+
 	private GraphEdit GraphEdit { get; set; }
 
 	public override void _Ready()
 	{
 		this.GraphEdit = this.GetNode<GraphEdit>("GraphEdit");
+		this.ButtonContainer = this.GetNode<Container>("Buttons");
 	}
 
 	public override void _Input(InputEvent inputEvent)
@@ -40,6 +43,7 @@ public class Main : Control
 		this.AddMachineAt(keyIdx.Value, mousePosition);
 	}
 
+	// ReSharper disable once UnusedMember.Local - Signal
 	private void AddMachine(int idx)
 	{
 		Vector2 position = this.GraphEdit.ScrollOffset + this.GetViewportRect().Size / 2;
