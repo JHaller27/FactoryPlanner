@@ -27,7 +27,7 @@ public class Main : Control
 		this.GraphEdit = this.GetNode<GraphEdit>("GraphEdit");
 		this.ButtonContainer = this.GetNode<Container>("Buttons");
 
-		this.Connect("MachinesUpdated", this, nameof(_on_Machines_Updated));
+		this.GraphEdit.Connect(nameof(GraphEdit.MachinesUpdated), this, nameof(_on_Machines_Updated));
 	}
 
 	public override void _Input(InputEvent inputEvent)
@@ -65,7 +65,7 @@ public class Main : Control
 		this.GraphEdit.AddMachineAt(graphNode, position);
 	}
 
-	private void _on_Machines_Updated()
+	public void _on_Machines_Updated()
 	{
 		IEnumerable<MachineNode> outputMachines = this.GraphEdit.GetChildren().Cast<MachineNode>()
 			.Where(m => m is OutputMachine);
