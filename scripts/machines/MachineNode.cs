@@ -19,8 +19,10 @@ namespace FactoryPlanner.scripts.machines
 
         protected virtual void SetupGUI()
         {
+            int currentSlotCount = this.GetChildCount() - 1;  // Ignore first row: label + controls
+
             // Add HSplitContainers
-            for (int i = 0; i < Math.Max(this.GetMachineModel().CountInputs(), this.GetMachineModel().CountOutputs()); i++)
+            for (int i = 0; i < Math.Max(this.GetMachineModel().CountInputs(), this.GetMachineModel().CountOutputs()) - currentSlotCount; i++)
             {
                 HSplitContainer container = new HSplitContainer();
 
