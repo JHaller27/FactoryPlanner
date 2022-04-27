@@ -94,8 +94,12 @@ namespace FactoryPlanner.scripts.machines
 
         protected void _on_GraphNode_close_request()
         {
-            this.QueueFree();
+            this.Selected = true;
+            EmitSignal(nameof(CloseRequested), this);
         }
+
+        [Signal]
+        public delegate void CloseRequested(MachineNode source);
     }
 
     public class EfficientMachineNode : MachineNode

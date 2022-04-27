@@ -8,7 +8,17 @@ using Network = MachineNetwork.MachineNetwork;
 
 public class GraphEdit : Godot.GraphEdit
 {
-	private MachineNode Selected { get; set; }
+	private MachineNode _selected;
+
+	private MachineNode Selected
+	{
+		get => this._selected;
+		set
+		{
+			this._selected = value;
+			this.SetSelected(this._selected);
+		}
+	}
 
 	// Called when the node enters the scene tree for the first time.
 	public override void _Ready()
@@ -39,7 +49,9 @@ public class GraphEdit : Godot.GraphEdit
 
 		node.Offset = position + this.ScrollOffset;
 
-		this.SetSelected(node);
+		this.Selected = node;
+
+		node.Connect(nameof(MachineNode.CloseRequested), this, nameof(_on_GraphEdit_delete_nodes_request));
 	}
 
 	public void DuplicateSelected()
@@ -126,7 +138,17 @@ public class GraphEdit : Godot.GraphEdit
 	// ReSharper disable once UnusedMember.Local - Signal
 	private void _on_GraphEdit_delete_nodes_request()
 	{
+		if (this.Selected == null) return;
+
+		this.Selected.QueueFree();
 		Network.Instance.RemoveMachine(this.Selected.GetMachineModel());
+	}
+
+	private void _on_GraphEdit_delete_nodes_request(MachineNode source)
+	{
+		this.Selected = source;
+
+		this._on_GraphEdit_delete_nodes_request();
 	}
 
 	// ReSharper disable once UnusedMember.Local - Signal
