@@ -119,6 +119,7 @@ public class GraphEdit : Godot.GraphEdit
 		this.DisconnectNode(fromName, fromSlot, toName, toSlot);
 		Network.Instance.DisconnectMachines(fromNode.GetMachineModel(), fromSlot, toNode.GetMachineModel(), toSlot);
 
+		Network.Instance.Recalculate();
 		this.UpdateAllMachines();
 	}
 
