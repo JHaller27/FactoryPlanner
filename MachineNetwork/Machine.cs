@@ -276,6 +276,15 @@ namespace MachineNetwork
 
         public override bool Update()
         {
+            // Clear disconnected inputs
+            foreach (IThroughput input in this.Inputs)
+            {
+                if (!input.HasNeighbor())
+                {
+                    input.SetFlow(0);
+                }
+            }
+
             // Get new output flow based on total input flow & number of connected neighbors
             decimal totalInputFlow = this.Inputs.Aggregate<PassthroughThroughput, decimal>(0, (current, input) => current + input.FlowRate);
             bool hasNoConnectedOutput = this.CountConnectedOutputs() == 0;
