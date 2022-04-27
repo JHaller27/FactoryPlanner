@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -5,6 +6,8 @@ namespace MachineNetwork
 {
     public class MachineNetwork
     {
+        private const int RetryCount = 16;
+
         private static MachineNetwork _instance;
         public static MachineNetwork Instance => _instance ??= new();
 
@@ -127,6 +130,7 @@ namespace MachineNetwork
             }
 
             bool needToRefresh;
+            int count = 0;
             do
             {
                 HashSet<MachineBase> seen = new();
@@ -140,7 +144,12 @@ namespace MachineNetwork
                     needToRefresh = curr.Update();
                     if (needToRefresh) break;
                 }
-            } while (needToRefresh);
+            } while (needToRefresh && count++ < RetryCount);
+
+            if (needToRefresh)
+            {
+                Console.WriteLine("ERROR: Exceeded retry count while recalculating");
+            }
         }
 
         public override string ToString()
